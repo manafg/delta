@@ -23,7 +23,7 @@ const FileReader: React.FC<{ onClick: () => void }> = ({ onClick }) => {
       
       <Stack horizontal tokens={{ childrenGap: 10 }} verticalAlign="center">
         <FontIcon iconName="TableStackRight" style={{ fontSize: 24, color: '#0078d4' }} />
-        <Text variant="large">Azure Data Lake Storage</Text>
+        <Text variant="large">File Reader</Text>
       </Stack>
       
       <Separator styles={{ root: { padding: '5px 0' } }} />

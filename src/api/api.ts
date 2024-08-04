@@ -27,6 +27,7 @@ api.interceptors.request.use(
 
 // Add a response interceptor
 api.interceptors.response.use(
+  
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
@@ -34,7 +35,6 @@ api.interceptors.response.use(
     // Check if the error is due to an expired token
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-
       try {
         // Attempt to refresh the token
         const newToken = await refreshToken();

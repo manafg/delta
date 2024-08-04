@@ -44,7 +44,6 @@ function PipelineListing() {
     );
 
     async function loadPipelines(status: number) {
-        debugger
         const response = await fetchPipelineList(status);
         setPipelines(response.items);
         setFilteredPipelines(response.items);

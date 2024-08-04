@@ -105,7 +105,7 @@ const Layout = () => {
           }}
         />
       </aside>
-      <main className="main-content">
+      <main style={{width: '100%'}} className="main-content">
         <Outlet />
       </main>
     </div>
