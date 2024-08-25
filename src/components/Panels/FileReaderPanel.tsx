@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 interface FileReaderPanelProps {
   isOpen: boolean;
+  nodeId: string;
   onDismiss: () => void;
   onSave: (data: FileReaderData) => void;
 }

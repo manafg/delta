@@ -7,7 +7,7 @@ export const refreshToken = async () => {
         grant_type: "refresh_token",
         client_id: "Pipebricks_App",
         scope: "offline_access email Pipebricks",
-        refresh_token: localStorage.getItem("token") || "",
+        refresh_token: localStorage.getItem("refresh_token") || "",
       }),
       {
         headers: {

@@ -1,140 +1,106 @@
-import React, { useState } from 'react';
-import ReactFlow, { Background, Controls, MiniMap, NodeTypes, Node } from 'reactflow';
-import 'reactflow/dist/style.css';
-import { Panel, PanelType, IconButton, Stack, Pivot, PivotItem } from '@fluentui/react';
-import PipelineHeader from '../components/pipline/PiplineHeader';
-import FileReader from '../components/DrawComponents/FileReader';
-import FileReaderPanel from '../components/DrawComponents/FileReaderPanel';
-import { v4 as uuidv4 } from 'uuid';
+import {
+  ReactFlow,
+  ReactFlowProvider,
+  useNodesState,
+  useEdgesState,
+  addEdge,
+  useReactFlow
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
+import { useCallback, useState } from "react";
+import { ActionButton } from "@fluentui/react";
+import PipelineHeader from "../components/pipline/PiplineHeader";
+import FileReader from '../components/DrawComponents/FileReader'
+import Aggregate from '../components/DrawComponents/Aggregate'
+import FileWriter from '../components/DrawComponents/FileWriter'
+import BottomDrawer  from '../components/BottomDrawer'
+import { FloatingButton } from '../Styles'
+import { Edge , Node } from '@xyflow/react';
+import { DnDProvider, useDnD } from '../context/Cnavas';
+
+const initialNodes: Node[] = [];
+
+const initialEdges: Edge[] = [];
+
+const nodeTypes = { fileReader: FileReader, aggregate: Aggregate, fileWriter: FileWriter };
+
+let id = 0;
+const getId = () => `dndnode_${id++}`;
 
 const CreatePipeline = () => {
-  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [type] = useDnD();
+  const { screenToFlowPosition } = useReactFlow();
 
-  const nodeTypes: NodeTypes = {
-    file_reader: (props) => (
-      <FileReader
-        {...props}
-        onClick={() => setIsPanelOpen(true)}
-      />
-    ),
-  };
+  const onConnect = useCallback(
+    (params: any) => setEdges((eds) => addEdge(params, eds)),
+    [setEdges]
+  );
 
-  const initialNodes: Node[] = [
-    {
-      id: uuidv4(),
-      type: 'file_reader',
-      position: { x: 100, y: 100 },
-      data: { label: 'File Reader' },
+  const onDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  }, []);
+
+  const onDrop = useCallback(
+    (event: React.DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+
+      if (typeof type !== 'string' || !type) {
+        return;
+      }
+
+      const position = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+      const newNode = {
+        id: getId(),
+        type,
+        position,
+        data: { label: `${type} node` },
+      };
+
+      setNodes((nds) => nds.concat(newNode));
     },
-  ];
+    [screenToFlowPosition, type],
+  );
 
-  const handlePanelDismiss = () => {
-    setIsPanelOpen(false);
+  const toggleDrawer = () => {
+    setIsDrawerOpen(!isDrawerOpen);
   };
-
-  const handlePanelSave = (data: any) => {
-    // Handle saving the panel data
-    console.log('Panel data saved:', data);
-    setIsPanelOpen(false);
-  };
-  const defaultViewport = { x: 0, y: 0, zoom: 1.5 }; // Adjust zoom level here
 
   return (
     <>
       <PipelineHeader />
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh', border: '0.1px ridge black' , margin: '10px'}}>
-        <ReactFlow
-          nodes={initialNodes}
-          edges={[]}
-          fitView
-          nodeTypes={nodeTypes}
-          defaultViewport={defaultViewport}
-        >
-          <Background  gap={12} size={1} color="#f1f1f1" />
-          <Controls />
-          <MiniMap />
-        </ReactFlow>
-        <IconButton
-          iconProps={{ iconName: 'DoubleChevronUp' }}
-          styles={{
-            root: {
-              position: 'absolute',
-              bottom: '20px',
-              right: '20px',
-              backgroundColor: '#0078d4',
-              color: 'white',
-              borderRadius: '50%',
-              width: '48px',
-              height: '48px',
-            },
-            icon: {
-              fontSize: '20px',
-            },
-          }}
-          onClick={() => setIsDrawerOpen(true)}
-        />
-      </div>
-      <FileReaderPanel
-        isOpen={isPanelOpen}
-        onDismiss={handlePanelDismiss}
-        onSave={handlePanelSave}
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        nodeTypes={nodeTypes}
+        onConnect={onConnect}
+        onDrop={onDrop}
+        onDragOver={onDragOver}
       />
-      <Panel
-        isOpen={isDrawerOpen}
-        onDismiss={() => setIsDrawerOpen(false)}
-        type={PanelType.custom}
-        customWidth="calc(100% - 200px)"
-        isBlocking={false}
-        headerText=""
-        onRenderNavigationContent={() => null}
-        styles={{
-          main: {
-            marginBottom: 0,
-            top: 'auto',
-            height: '50%',
-            left: '200px',
-          },
-          scrollableContent: {
-            display: 'flex',
-            flexDirection: 'column',
-          },
-          content: {
-            padding: '0',
-          },
-          commands: {
-            display: 'none',
-          },
-        }}
-      >
-        <Stack horizontal horizontalAlign="space-between" verticalAlign="center" styles={{
-          root: {
-            padding: '0 10px',
-            borderBottom: '1px solid #eee',
-          }
-        }}>
-          <Pivot>
-            <PivotItem headerText="Data preview" />
-            <PivotItem headerText="Authoring errors" />
-            <PivotItem headerText="Runtime logs" />
-            <PivotItem headerText="Metrics" />
-          </Pivot>
-          <IconButton
-            iconProps={{ iconName: 'ChevronDown' }}
-            onClick={() => setIsDrawerOpen(false)}
-            styles={{
-              root: {
-                color: '#666',
-              },
-            }}
-          />
-        </Stack>
-        <div style={{ padding: '20px' }}>
-          <p>This is the content of your draggable drawer.</p>
-        </div>
-      </Panel>
+      <ActionButton
+        iconProps={{ iconName: 'ChevronUp' }}
+        onClick={toggleDrawer}
+        styles={FloatingButton}
+      />
+      <BottomDrawer isOpen={isDrawerOpen} onDismiss={toggleDrawer} />
     </>
   );
 };
 
-export default CreatePipeline;
+export default () => {
+  return (
+    <ReactFlowProvider>
+      <DnDProvider>
+        <CreatePipeline />
+      </DnDProvider>
+    </ReactFlowProvider>
+  );
+};

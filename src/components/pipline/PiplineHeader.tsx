@@ -1,9 +1,21 @@
 import React from 'react';
 import { CommandBar, ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
-import { IContextualMenuItem } from '@fluentui/react/lib/ContextualMenu';
-import { IconButton } from '@fluentui/react/lib/Button';
+import { useDnD } from '../../context/Cnavas';
+interface PipelineHeaderProps {
+  onAddFileReader?: () => void;
+  onAddFileWriter?: () => void;
+  onAddAggregate?: () => void;
+}
 
-const PipelineHeader: React.FC = () => {
+const PipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , onAddFileWriter, onAddAggregate}) => {
+  const [_, setType] = useDnD();
+  
+  const onDragStart = (event: React.DragEvent<HTMLDivElement>, nodeType: string ) => {
+    if (setType) {
+      setType(nodeType);
+    }
+    event.dataTransfer.effectAllowed = 'move';
+  };
   const items: ICommandBarItemProps[] = [
     {
       key: 'undo',
@@ -24,14 +36,32 @@ const PipelineHeader: React.FC = () => {
       subMenuProps: {
         items: [
           {
-            key: 'input1',
-            text: 'Input 1',
-            onClick: () => console.log('Input 1 clicked'),
+            key: 'fileReader',
+            text: 'File Reader',
+            onClick: onAddFileReader,
+            onRender: (item: ICommandBarItemProps) => (
+              <div
+                draggable
+                onDragStart={(e) => onDragStart(e, 'fileReader')}
+                style={{ cursor: 'move', padding: '8px' }}
+              >
+                {item.text}
+              </div>
+            ),
           },
           {
             key: 'input2',
             text: 'Input 2',
             onClick: () => console.log('Input 2 clicked'),
+            onRender: (item: ICommandBarItemProps) => (
+              <div
+                draggable
+                onDragStart={(e) => onDragStart(e, 'input2')}
+                style={{ cursor: 'move', padding: '8px' }}
+              >
+                {item.text}
+              </div>
+            ),
           },
         ],
       },
@@ -43,14 +73,32 @@ const PipelineHeader: React.FC = () => {
       subMenuProps: {
         items: [
           {
-            key: 'output1',
-            text: 'Output 1',
-            onClick: () => console.log('Output 1 clicked'),
+            key: 'fileWriter',
+            text: 'File Writer',
+            onClick: onAddFileWriter,
+            onRender: (item: ICommandBarItemProps) => (
+              <div
+                draggable
+                onDragStart={(e) => onDragStart(e, 'fileWriter')}
+                style={{ cursor: 'move', padding: '8px' }}
+              >
+                {item.text}
+              </div>
+            ),
           },
           {
             key: 'output2',
             text: 'Output 2',
             onClick: () => console.log('Output 2 clicked'),
+            onRender: (item: ICommandBarItemProps) => (
+              <div
+                draggable
+                onDragStart={(e) => onDragStart(e, 'output2')}
+                style={{ cursor: 'move', padding: '8px' }}
+              >
+                {item.text}
+              </div>
+            ),
           },
         ],
       },
@@ -62,14 +110,32 @@ const PipelineHeader: React.FC = () => {
       subMenuProps: {
         items: [
           {
-            key: 'operation1',
-            text: 'Operation 1',
-            onClick: () => console.log('Operation 1 clicked'),
+            key: 'aggregate',
+            text: 'Aggregate',
+            onClick: onAddAggregate,
+            onRender: (item: ICommandBarItemProps) => (
+              <div
+                draggable
+                onDragStart={(e) => onDragStart(e, 'aggregate')}
+                style={{ cursor: 'move', padding: '8px' }}
+              >
+                {item.text}
+              </div>
+            ),
           },
           {
             key: 'operation2',
             text: 'Operation 2',
             onClick: () => console.log('Operation 2 clicked'),
+            onRender: (item: ICommandBarItemProps) => (
+              <div
+                draggable
+                onDragStart={(e) => onDragStart(e, 'operation2')}
+                style={{ cursor: 'move', padding: '8px' }}
+              >
+                {item.text}
+              </div>
+            ),
           },
         ],
       },
