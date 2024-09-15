@@ -1,14 +1,21 @@
 import React from 'react';
-import { Text, Stack, Icon, Separator } from '@fluentui/react';
+import { Text, Stack, Separator } from '@fluentui/react';
 import { Card } from '@fluentui/react-cards';
 import { Handle, Position, NodeProps } from '@xyflow/react';
 import { FileArrowUp, } from '@phosphor-icons/react';
+import { usePanel } from '../Panels/PanelProvider';
+import FileReaderPanel from '../Panels/FileReaderPanel/FileReaderPanel'
+import { useNodesData } from '@xyflow/react';
 
 interface FileReaderProps extends NodeProps {
-  onClick?: () => void;
+  nodeId?: string;
 }
 
-const FileReader: React.FC<FileReaderProps> = ({ onClick }) => {
+
+const FileReader: React.FC<FileReaderProps> = ({data}) => {
+  const { id } = data;
+  const nodeData:any = useNodesData(id?.toString() ?? '');
+  const { openPanel } = usePanel();
   return (
     <Card 
       className="file-reader-node" 
@@ -21,7 +28,7 @@ const FileReader: React.FC<FileReaderProps> = ({ onClick }) => {
           cursor: 'pointer', 
         }
       }}
-      onClick={onClick} 
+      onClick={() => openPanel('filereader', <FileReaderPanel nodeId={id?.toString() ?? ''} />, 'filereader', 'File Reader')} 
     >
       <Handle type="source" position={Position.Right} />
       
@@ -33,8 +40,8 @@ const FileReader: React.FC<FileReaderProps> = ({ onClick }) => {
       <Separator styles={{ root: { padding: '5px 0' } }} />
       
       <Stack horizontal tokens={{ childrenGap: 10 }} horizontalAlign="space-between">
-        <Text>test</Text>
-        <Text>CSV</Text>
+        <Text>{nodeData?.data?.options?.physical_path ?? 'No path'}</Text>
+        <Text>{nodeData?.data?.options?.share_type ?? 'No type'}</Text>
       </Stack>
     </Card>
   );

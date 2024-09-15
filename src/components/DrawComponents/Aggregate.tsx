@@ -25,9 +25,9 @@ const Aggregate: React.FC<AggregateProps> = ({ onClick }) => {
       onClick={onClick} 
     >
       <Handle type="source" position={Position.Right} />
-      <Handle type="source" position={Position.Right} />
 
       <Handle type="target" position={Position.Left} />
+
 
       <Stack horizontal tokens={{ childrenGap: 10 }} verticalAlign="center">
         <FontIcon iconName="Merge" style={{ fontSize: 24, color: '#0078d4' }} />

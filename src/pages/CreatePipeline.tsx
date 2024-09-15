@@ -3,29 +3,36 @@ import {
   ReactFlowProvider,
   useNodesState,
   useEdgesState,
+  useNodes,
+  useEdges,
   addEdge,
-  useReactFlow
+  useReactFlow,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useCallback, useState } from "react";
 import { ActionButton } from "@fluentui/react";
 import PipelineHeader from "../components/pipline/PiplineHeader";
-import FileReader from '../components/DrawComponents/FileReader'
-import Aggregate from '../components/DrawComponents/Aggregate'
-import FileWriter from '../components/DrawComponents/FileWriter'
-import BottomDrawer  from '../components/BottomDrawer'
-import { FloatingButton } from '../Styles'
-import { Edge , Node } from '@xyflow/react';
-import { DnDProvider, useDnD } from '../context/Cnavas';
+import FileReader from "../components/DrawComponents/FileReader";
+import Aggregate from "../components/DrawComponents/Aggregate";
+import FileWriter from "../components/DrawComponents/FileWriter";
+import BottomDrawer from "../components/BottomDrawer";
+import { FloatingButton } from "../Styles";
+import { Edge, Node } from "@xyflow/react";
+import { DnDProvider, useDnD } from "../context/Cnavas";
+import { PanelProvider } from "../components/Panels/PanelProvider";
+import { v4 as uuidv4 } from "uuid";
 
 const initialNodes: Node[] = [];
 
 const initialEdges: Edge[] = [];
 
-const nodeTypes = { fileReader: FileReader, aggregate: Aggregate, fileWriter: FileWriter };
+const nodeTypes = {
+  fileReader: FileReader,
+  aggregate: Aggregate,
+  fileWriter: FileWriter,
+};
 
-let id = 0;
-const getId = () => `dndnode_${id++}`;
+const getId = () => uuidv4();
 
 const CreatePipeline = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -41,14 +48,14 @@ const CreatePipeline = () => {
 
   const onDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
+    event.dataTransfer.dropEffect = "move";
   }, []);
 
   const onDrop = useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
       event.preventDefault();
 
-      if (typeof type !== 'string' || !type) {
+      if (typeof type !== "string" || !type) {
         return;
       }
 
@@ -56,21 +63,23 @@ const CreatePipeline = () => {
         x: event.clientX,
         y: event.clientY,
       });
+      const newId = getId();
       const newNode = {
-        id: getId(),
+        id: newId,
         type,
         position,
-        data: { label: `${type} node` },
+        data: { label: `${type} node`, id: newId },
       };
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [screenToFlowPosition, type],
+    [screenToFlowPosition, type]
   );
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
+
 
   return (
     <>
@@ -86,7 +95,7 @@ const CreatePipeline = () => {
         onDragOver={onDragOver}
       />
       <ActionButton
-        iconProps={{ iconName: 'ChevronUp' }}
+        iconProps={{ iconName: "ChevronUp" }}
         onClick={toggleDrawer}
         styles={FloatingButton}
       />
@@ -99,7 +108,9 @@ export default () => {
   return (
     <ReactFlowProvider>
       <DnDProvider>
-        <CreatePipeline />
+        <PanelProvider>
+          <CreatePipeline />
+        </PanelProvider>
       </DnDProvider>
     </ReactFlowProvider>
   );
