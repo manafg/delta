@@ -57,15 +57,17 @@ export function AddFields({ setStep, nodeId }: Props) {
 
 
   const onSubmit = () => {
-    debugger
     const validatedData = {
         ...nodeData?.data,
-        schema: {
-          type: "struct",
-          fields: fields.map((field) => ({
-            name: field.name,
-            type: field.type,
-          })),
+        options: {
+            ...nodeData?.data?.options,
+            schema: {
+                type: "struct",
+                fields: fields.map((field) => ({
+                    name: field.name,
+                    type: field.type,
+                })),
+            },
         },
     };
 

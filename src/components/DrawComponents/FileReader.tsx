@@ -12,10 +12,10 @@ interface FileReaderProps extends NodeProps {
 }
 
 
-const FileReader: React.FC<FileReaderProps> = ({data}) => {
-  const { id } = data;
+const FileReader: React.FC<FileReaderProps> = ({id}) => {
   const nodeData:any = useNodesData(id?.toString() ?? '');
   const { openPanel } = usePanel();
+  console.log('nodeData',nodeData)
   return (
     <Card 
       className="file-reader-node" 

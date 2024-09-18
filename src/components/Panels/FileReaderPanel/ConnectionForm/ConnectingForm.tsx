@@ -21,7 +21,8 @@ export function ConnectingForm({ nodeId,
 }: Props) {
   const { control } = useFormContext();
   
-  const { field: physicalPathField } = useController({ control, name: 'options.physical_path' });
+  const { field: physicalPathField } = useController({ control, name: 'options.location.physical_path' });
+  const { field: pathField } = useController({ control, name: 'options.location.path' });
   const { dismissPanel } = usePanel()
   const { updateNodeData } = useReactFlow();
 
@@ -36,6 +37,7 @@ export function ConnectingForm({ nodeId,
   };
 
   const onSubmit = (data: any) => {
+    data.options.location.path = `/mnt/data/source/${nodeId}`;
     updateNodeData(nodeId,data);
     setStep();
   };
@@ -44,6 +46,8 @@ export function ConnectingForm({ nodeId,
     dismissPanel();
   };
 
+  console.log(form.formState.errors);
+
   return (
     <form
       autoComplete="off"
@@ -51,25 +55,26 @@ export function ConnectingForm({ nodeId,
       onSubmit={handleSubmit(onSubmit)}
     >
       <Stack tokens={{ childrenGap: 15 }}>
-        <InputField label="Physical Path" id="options.physical_path" {...physicalPathField} required />
+        <InputField readOnly value={`/mnt/data/source/${nodeId}`} label="Path" id="options.location.path" />
+        <InputField label="Physical Path" id="options.location.physical_path" {...physicalPathField} required />
         <DropDown
-          name="options.share_type"
+          name="options.location.share_type"
           label="Share Type"
           options={shareTypeOptions}
         />
         <ToggleButton
           label="Authentication Required"
-          name="options.authentication.authRequired"
+          name="options.location.authentication.authRequired"
         />
-        {data.options?.authentication?.authRequired && (
+        {data.options?.location?.authentication?.authRequired && (
           <>
             <InputField
-              name="options.authentication.username"
+              name="options.location.authentication.username"
               label="Username"
               required
             />
             <InputField
-              name="options.authentication.password"
+              name="options.location.authentication.password"
               label="Password"
               type="password"
               required
@@ -81,21 +86,35 @@ export function ConnectingForm({ nodeId,
           label="Format"
           options={formatOptions}
         />
+        <DropDown
+          name="options.options.header"
+          label="Header"
+          options={[
+            { key: 'true', text: 'True' },
+            { key: 'false', text: 'False' },
+          ]}
+        />
+        <DropDown
+          name="options.options.inferSchema"
+          label="Infer Schema"
+          options={[
+            { key: 'true', text: 'True' },
+            { key: 'false', text: 'False' },
+          ]}
+        />
         <ToggleButton
           label="Enable Streaming"
           name="stream_options.enabled"
         />
-        {data.options?.stream_options?.enabled && (
-          <SpinButton
-            label="Max Files Per Trigger"
-            min={1}
-            step={1}
-            value={data.stream_options?.maxFilesPerTrigger}
-            onChange={(_, newValue) =>
-              handleStreamOptionsChange(newValue || "1")
-            }
-          />
-        )}
+        <SpinButton
+          label="Max Files Per Trigger"
+          min={1}
+          step={1}
+          value={data.stream_options?.maxFilesPerTrigger}
+          onChange={(_, newValue) =>
+            handleStreamOptionsChange(newValue || "1")
+          }
+        />
         <Stack horizontal tokens={{ childrenGap: 10 }}>
           <PrimaryButton text="next" type="submit" />
           <DefaultButton text="cancel" onClick={handleCancel} />

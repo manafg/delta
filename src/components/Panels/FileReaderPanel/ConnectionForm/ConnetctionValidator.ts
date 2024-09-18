@@ -9,22 +9,25 @@ const useSchema = () => {
   return useMemo(() => 
     yup.object().shape({
       options: yup.object().shape({
-        physical_path: yup.string().required('Physical path is required'),
-        share_type: yup.string().oneOf(['smb', 'nfs'], 'Invalid share type'),
+        location: yup.object().shape({
+          physical_path: yup.string().required('Physical path is required'),
+          share_type: yup.string().oneOf(['smb', 'nfs'], 'Invalid share type'),
+          authentication: yup.object().shape({
+            authRequired: yup.boolean().nullable(),
+            username: yup.string().when('$authRequired', ([authRequired]) => 
+              authRequired ? yup.string().required('Username is required when authentication is enabled') : yup.string()
+            ),
+            password: yup.string().when('$authRequired', ([authRequired]) => 
+              authRequired ? yup.string().required('Password is required when authentication is enabled') : yup.string()
+            ),
+          }),
+        }),
         format: yup.string().oneOf(['csv', 'json', 'parquet'], 'Invalid format'),
         options: yup.object().shape({
           header: yup.string().oneOf(['true', 'false']),
           inferSchema: yup.string().oneOf(['true', 'false']),
         }),
-        authentication: yup.object().shape({
-          authRequired: yup.boolean().nullable(),
-          username: yup.string().when('$authRequired', ([authRequired]) => 
-            authRequired ? yup.string().required('Username is required when authentication is enabled') : yup.string()
-          ),
-          password: yup.string().when('$authRequired', ([authRequired]) => 
-            authRequired ? yup.string().required('Password is required when authentication is enabled') : yup.string()
-          ),
-        }).nullable(),
+        
       }),
       stream_options: yup.object().shape({
         enabled: yup.boolean().nullable(),
@@ -36,23 +39,27 @@ const useSchema = () => {
 
 const useDefaultValues = (): any => ({
   options: {
-    path: '',
-    physical_path: '',
-    share_type: 'smb',
+    location:{
+      path: '',
+      physical_path: '',
+      share_type: 'smb',
+      authentication: {
+        authRequired: false,
+        username: '',
+        password: '',
+      },
+    },
+    mode: "rw",
     format: 'csv',
     options: {
       header: 'true',
       inferSchema: 'true',
     },
-    authentication: {
-      authRequired: false,
-      username: '',
-      password: '',
-    },
   },
   stream_options: {
     enabled: false,
     maxFilesPerTrigger: 1,
+    timestamp_col: "event_time", 
   },
 });
 

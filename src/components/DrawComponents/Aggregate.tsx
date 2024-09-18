@@ -24,9 +24,8 @@ const Aggregate: React.FC<AggregateProps> = ({ onClick }) => {
       }}
       onClick={onClick} 
     >
-      <Handle type="source" position={Position.Right} />
-
       <Handle type="target" position={Position.Left} />
+      <Handle type="source" position={Position.Right} />
 
 
       <Stack horizontal tokens={{ childrenGap: 10 }} verticalAlign="center">

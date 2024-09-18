@@ -27,12 +27,24 @@ const initialNodes: Node[] = [];
 const initialEdges: Edge[] = [];
 
 const nodeTypes = {
-  fileReader: FileReader,
+  file_reader: FileReader,
   aggregate: Aggregate,
-  fileWriter: FileWriter,
+  file_writer: FileWriter,
 };
 
 const getId = () => uuidv4();
+
+const adjustedType = (type: string) => {
+  if (type === "fileReader") {
+    return "file_reader";
+  }
+  if (type === "aggregate") {
+    return "aggregate";
+  }
+  if (type === "fileWriter") {
+    return "file_writer";
+  }
+};
 
 const CreatePipeline = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -66,9 +78,9 @@ const CreatePipeline = () => {
       const newId = getId();
       const newNode = {
         id: newId,
-        type,
+        type: adjustedType(type),
         position,
-        data: { label: `${type} node`, id: newId },
+        data: {},
       };
 
       setNodes((nds) => nds.concat(newNode));
@@ -79,7 +91,6 @@ const CreatePipeline = () => {
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
-
 
   return (
     <>
