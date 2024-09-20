@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useForm, UseFormProps } from 'react-hook-form';
 import * as yup from 'yup';
 import { FileReaderData } from '../types';
+import { useNodesData } from '@xyflow/react';
 
 const useSchema = () => {
   return useMemo(() => 
@@ -24,16 +25,17 @@ const useSchema = () => {
 
 const useDefaultValues = (): any => ({
   options: {
-    options: {
+    schema: {
         type: 'struct',
         fields: [],
       },
     },
 });
 
-function useAddFieldsForm(props?: UseFormProps<FileReaderData>) {
+function useAddFieldsForm(nodeId: string, props?: UseFormProps<FileReaderData>) {
   const schema = useSchema();
   const defaultValues = useDefaultValues();
+  const nodeData:any = useNodesData(nodeId?.toString() ?? '');
 
   const form = useForm<any>({
     mode: 'all',

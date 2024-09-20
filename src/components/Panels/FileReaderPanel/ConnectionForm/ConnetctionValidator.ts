@@ -72,7 +72,7 @@ function useFileReaderForm(nodeId: string ,props?: UseFormProps<FileReaderData>)
     mode: 'all',
     resolver: yupResolver(schema),
     shouldFocusError: false,
-    defaultValues: nodeData?.data?.options?.physical_path ? nodeData?.data : defaultValues ,
+    defaultValues: nodeData?.data?.options?.location?.physical_path ? nodeData?.data : defaultValues ,
     ...props,
   });
 

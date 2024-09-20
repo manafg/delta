@@ -29,7 +29,7 @@ interface Props {
 
 export function AddFields({ setStep, nodeId }: Props) {
   const { updateNodeData } = useReactFlow();
-  const form = useAddFieldsForm();
+  const form = useAddFieldsForm(nodeId);
 
   const { handleSubmit, setValue } = form;
 
