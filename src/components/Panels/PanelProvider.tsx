@@ -2,7 +2,7 @@ import React, { ReactNode, useState, useContext, createContext } from 'react';
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import ReactDOM from 'react-dom';
 
-type PanelContentType = 'filereader' | 'custom' | 'other'; // Add more types as needed
+type PanelContentType = 'filereader' | 'aggregate' | 'custom' | 'other'; // Add more types as needed
 
 interface PanelState {
   isOpen: boolean;
