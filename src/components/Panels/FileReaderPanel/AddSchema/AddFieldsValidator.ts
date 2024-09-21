@@ -41,7 +41,7 @@ function useAddFieldsForm(nodeId: string, props?: UseFormProps<FileReaderData>) 
     mode: 'all',
     resolver: yupResolver(schema),
     shouldFocusError: false,
-    defaultValues,
+    defaultValues: nodeData?.data?.options?.schema?.fields ? nodeData?.data?.options : defaultValues,
     ...props,
   });
 

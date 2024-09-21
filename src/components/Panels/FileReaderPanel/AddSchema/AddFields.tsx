@@ -30,22 +30,23 @@ interface Props {
 export function AddFields({ setStep, nodeId }: Props) {
   const { updateNodeData } = useReactFlow();
   const form = useAddFieldsForm(nodeId);
+  const nodeData:any = useNodesData(nodeId);
 
   const { handleSubmit, setValue } = form;
 
-  const [fields, setFields] = useState([{ name: "", type: "" }]);
+  const [fields, setFields] = useState(nodeData?.data?.options?.schema?.fields ?? [{ name: "", type: "" }]);
 
   const handleAddField = () => {
     setFields([...fields, { name: "", type: "" }]);
   };
 
   const handleRemoveField = (index: number) => {
-    const newFields = fields.filter((_, i) => i !== index);
+    const newFields = fields.filter((_:any, i:any) => i !== index);
     setFields(newFields);
   };
 
   const handleFieldChange = (index: number, key: string, value: string) => {
-    const newFields = fields.map((field, i) =>
+    const newFields = fields.map((field:any, i:any) =>
       i === index ? { ...field, [key]: value } : field
     );
     setFields(newFields);
@@ -53,7 +54,6 @@ export function AddFields({ setStep, nodeId }: Props) {
   };
   const { dismissPanel } = usePanel()
 
-  const nodeData:any = useNodesData(nodeId);
 
 
   const onSubmit = () => {
@@ -63,7 +63,7 @@ export function AddFields({ setStep, nodeId }: Props) {
             ...nodeData?.data?.options,
             schema: {
                 type: "struct",
-                fields: fields.map((field) => ({
+                fields: fields.map((field:any) => ({
                     name: field.name,
                     type: field.type,
                 })),
@@ -81,7 +81,7 @@ export function AddFields({ setStep, nodeId }: Props) {
     <FormProvider {...form}>
       <form autoComplete="off" id="AddSchema" onSubmit={handleSubmit(onSubmit)}>
         <Stack tokens={{ childrenGap: 10 }}>
-          {fields.map((field, index) => (
+          {fields.map((field:any, index:any) => (
             <Stack
               horizontal
               tokens={{ childrenGap: 10 }}

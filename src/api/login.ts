@@ -22,7 +22,6 @@ const useLogin = () => {
             });
 
             if (response.data && response.data.access_token) {
-                debugger
                 localStorage.setItem('token', response.data.access_token);
                 localStorage.setItem('refresh_token', response.data.refresh_token);
                 setIsSuccess(true);

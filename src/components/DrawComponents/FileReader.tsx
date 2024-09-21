@@ -5,7 +5,7 @@ import { Handle, Position, NodeProps } from '@xyflow/react';
 import { FileArrowUp } from '@phosphor-icons/react';
 import { usePanel } from '../Panels/PanelProvider';
 import FileReaderPanel from '../Panels/FileReaderPanel/FileReaderPanel';
-import { useNodesData } from '@xyflow/react';
+import { useNodesData  } from '@xyflow/react';
 
 interface FileReaderProps extends NodeProps {
   nodeId?: string;
@@ -39,7 +39,7 @@ const FileReader: React.FC<FileReaderProps> = ({ id }) => {
   const nodeData: any = useNodesData(id?.toString() ?? '');
   const { openPanel } = usePanel();
   const valid = nodeData?.data?.options?.location?.physical_path && nodeData?.data?.options?.schema?.fields?.length > 0;
-  debugger
+  
   return (
     <Card
       className="file-reader-node"

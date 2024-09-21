@@ -2,7 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useMemo } from 'react';
 import { useForm, UseFormProps } from 'react-hook-form';
 import * as yup from 'yup';
-import { FileReaderData } from '../types';
+import { FileWriterData } from '../types';
 import { useNodesData } from '@xyflow/react';
 
 const useSchema = () => {
@@ -49,7 +49,7 @@ const useDefaultValues = (): any => ({
         password: '',
       },
     },
-    mode: "rw",
+    mode: "w",
     format: 'csv',
     options: {
       header: 'true',
@@ -63,7 +63,7 @@ const useDefaultValues = (): any => ({
   },
 });
 
-function useFileReaderForm(nodeId: string ,props?: UseFormProps<FileReaderData>) {
+function useFileReaderForm(nodeId: string ,props?: UseFormProps<FileWriterData>) {
   const schema = useSchema();
   const defaultValues = useDefaultValues();
   const nodeData:any = useNodesData(nodeId?.toString() ?? '');

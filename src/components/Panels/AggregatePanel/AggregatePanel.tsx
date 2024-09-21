@@ -4,6 +4,7 @@ import { DefaultButton, PrimaryButton, TextField, Dropdown, IDropdownOption, Sta
 
 interface AggregatePanelProps {
   nodeId: string;
+  connectedNode?: any;
 }
 
 interface AggregateFunction {
@@ -17,6 +18,8 @@ interface AggregateFunction {
 const aggregationOptions: IDropdownOption[] = [
   { key: 'sum', text: 'Sum' },
   { key: 'average', text: 'Average' },
+  { key: 'min', text: 'Minimum' },
+  { key: 'max', text: 'Maximum' },
   // Add more options as needed
 ];
 
@@ -27,7 +30,7 @@ const timeUnitOptions: IDropdownOption[] = [
   // Add more options as needed
 ];
 
-export function AggregatePanel({ nodeId }: AggregatePanelProps) {
+export function AggregatePanel({ nodeId , connectedNode}: AggregatePanelProps) {
   const nodeData: any = useNodesData(nodeId);
   const [aggregateFunctions, setAggregateFunctions] = useState<AggregateFunction[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -75,6 +78,13 @@ export function AggregatePanel({ nodeId }: AggregatePanelProps) {
     setAggregateFunctions(updatedFunctions);
   };
 
+  const handleSave = () => {
+    // Implement save functionality here
+    console.log('Aggregate functions saved:', aggregateFunctions);
+  };
+
+  const options = connectedNode?.data?.options?.schema?.fields?.map((field: any) => ({ key: field.name, text: field.name }));
+
   return (
     <div>
       <p>Calculate an aggregation (like sum or average) each time a new event occurs.</p>
@@ -92,13 +102,13 @@ export function AggregatePanel({ nodeId }: AggregatePanelProps) {
             label="Field"
             selectedKey={newAggregateFunction.field}
             onChange={(e, option) => setNewAggregateFunction({ ...newAggregateFunction, field: option?.key as string })}
-            options={[]} // Add field options dynamically if needed
+            options={options} // Add field options dynamically if needed
           />
           <Dropdown
             label="Filter by"
             selectedKey={newAggregateFunction.filterBy}
             onChange={(e, option) => setNewAggregateFunction({ ...newAggregateFunction, filterBy: option?.key as string })}
-            options={[]} // Add filter options dynamically if needed
+            options={options} // Add filter options dynamically if needed
           />
           <Stack horizontal tokens={{ childrenGap: 10 }}>
             <TextField
@@ -128,6 +138,7 @@ export function AggregatePanel({ nodeId }: AggregatePanelProps) {
           </li>
         ))}
       </ul>
+      <PrimaryButton text="Save" onClick={handleSave} />
     </div>
   );
 }

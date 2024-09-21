@@ -1,17 +1,32 @@
 import React from "react";
-import { Handle, Position } from "@xyflow/react";
+import { Handle, Position, useReactFlow } from "@xyflow/react";
 import { Text, Stack, Icon, Separator } from "@fluentui/react";
 import { Card } from "@fluentui/react-cards";
 import { FontIcon } from "@fluentui/react/lib/Icon";
 import { NodeProps } from "@xyflow/react";
 import { usePanel } from "../Panels/PanelProvider";
 import { AggregatePanel } from "../Panels/AggregatePanel/AggregatePanel";
+import { useState, useEffect } from "react";
 interface AggregateProps extends NodeProps {
   onClick?: () => void;
 }
 
-const Aggregate: React.FC<AggregateProps> = ({ id }) => {
+const Aggregate: React.FC<AggregateProps> = (props:any) => {
   const { openPanel } = usePanel();
+  const { getEdges, getNode } = useReactFlow();
+  const [connectedNode, setConnectedNode] = useState(null);
+
+  useEffect(() => {
+    const edges = getEdges();
+    const incomingEdge = edges.find(edge => edge.target === props.id);
+    if (incomingEdge) {
+      const sourceNode:any = getNode(incomingEdge.source);
+      setConnectedNode(sourceNode);
+    }
+  }, [getEdges, getNode, props.id]);
+
+
+
 
   return (
     <Card
@@ -28,7 +43,7 @@ const Aggregate: React.FC<AggregateProps> = ({ id }) => {
       onClick={() =>
         openPanel(
           "aggregate",
-          <AggregatePanel nodeId={id?.toString() ?? ""} />,
+          <AggregatePanel connectedNode={connectedNode} nodeId={props.id} />,
           "aggregate",
           "Aggregate"
         )
