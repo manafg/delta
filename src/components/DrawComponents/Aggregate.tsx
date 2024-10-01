@@ -13,17 +13,7 @@ interface AggregateProps extends NodeProps {
 
 const Aggregate: React.FC<AggregateProps> = (props:any) => {
   const { openPanel } = usePanel();
-  const { getEdges, getNode } = useReactFlow();
-  const [connectedNode, setConnectedNode] = useState(null);
-
-  useEffect(() => {
-    const edges = getEdges();
-    const incomingEdge = edges.find(edge => edge.target === props.id);
-    if (incomingEdge) {
-      const sourceNode:any = getNode(incomingEdge.source);
-      setConnectedNode(sourceNode);
-    }
-  }, [getEdges, getNode, props.id]);
+  
 
 
 
@@ -43,7 +33,7 @@ const Aggregate: React.FC<AggregateProps> = (props:any) => {
       onClick={() =>
         openPanel(
           "aggregate",
-          <AggregatePanel connectedNode={connectedNode} nodeId={props.id} />,
+          <AggregatePanel nodeId={props.id} />,
           "aggregate",
           "Aggregate"
         )

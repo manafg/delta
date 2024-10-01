@@ -6,25 +6,32 @@ import { NodeProps } from "@xyflow/react";
 import { FileArrowDown } from "@phosphor-icons/react";
 import { usePanel } from "../Panels/PanelProvider";
 import { FileWriterPanel } from "../Panels/FileWriterPanel/FileWriterPanel";
+import { useNodesData  } from '@xyflow/react';
+
 interface FileWriterProps extends NodeProps {
   id: string;
 }
 
+const cardStyles = (valid: boolean) => ({
+  root: {
+    border: '1px solid',
+    borderColor: valid ? '#0078d4' : 'red',
+    borderRadius: '4px',
+    width: '250px',
+    cursor: 'pointer',
+  }
+});
+
 const FileWriter: React.FC<FileWriterProps> = ({ id }) => {
   const { openPanel } = usePanel();
+  const nodeData: any = useNodesData(id?.toString() ?? '');
+  const valid = nodeData?.data?.options?.location?.physical_path;
 
   return (
     <Card
       className="file-writer-node"
       tokens={{ childrenGap: 10, padding: 10 }}
-      styles={{
-        root: {
-          border: "1px solid #0078d4",
-          borderRadius: "4px",
-          width: "250px",
-          cursor: "pointer",
-        },
-      }}
+      styles={cardStyles(valid)}
       onClick={() =>
         openPanel(
           "filewriter",

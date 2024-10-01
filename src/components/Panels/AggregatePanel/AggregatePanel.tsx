@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNodesData } from '@xyflow/react';
 import { DefaultButton, PrimaryButton, TextField, Dropdown, IDropdownOption, Stack, Label, IconButton } from '@fluentui/react';
+import { useReactFlow } from '@xyflow/react';
+import { transformAggregation, reverseTransformAggregation } from './serlizer';
+import { usePanel } from '../PanelProvider';
 
 interface AggregatePanelProps {
   nodeId: string;
-  connectedNode?: any;
 }
 
 interface AggregateFunction {
   aggregation: string;
   field: string;
-  filterBy: string;
+  filterBy: string[];
   timeValue: number;
   timeUnit: string;
 }
@@ -30,7 +32,7 @@ const timeUnitOptions: IDropdownOption[] = [
   // Add more options as needed
 ];
 
-export function AggregatePanel({ nodeId , connectedNode}: AggregatePanelProps) {
+export function AggregatePanel({ nodeId }: AggregatePanelProps) {
   const nodeData: any = useNodesData(nodeId);
   const [aggregateFunctions, setAggregateFunctions] = useState<AggregateFunction[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -38,10 +40,33 @@ export function AggregatePanel({ nodeId , connectedNode}: AggregatePanelProps) {
   const [newAggregateFunction, setNewAggregateFunction] = useState<AggregateFunction>({
     aggregation: '',
     field: '',
-    filterBy: '',
+    filterBy: [],
     timeValue: 5,
     timeUnit: 'Second',
   });
+
+  const { getEdges, getNode } = useReactFlow();
+  const [connectedNode, setConnectedNode] = useState<any>(null);
+  const { updateNodeData } = useReactFlow();
+  const { dismissPanel } = usePanel()
+
+  useEffect(()=>{
+    debugger
+    const node = getNode(nodeId);
+    if (node?.data && Object.keys(node.data).length > 0) {
+    const { input } = reverseTransformAggregation(node?.data);
+    setAggregateFunctions(input);
+    }
+  },[getNode, nodeId])
+
+  useEffect(() => {
+    const edges = getEdges();
+    const incomingEdge = edges.find(edge => edge.target === nodeId);
+    if (incomingEdge) {
+      const sourceNode:any = getNode(incomingEdge.source);
+      setConnectedNode(sourceNode);
+    }
+  }, [getEdges, getNode, nodeId]);
 
   const handleAddAggregateFunction = () => {
     if (editIndex !== null) {
@@ -56,7 +81,7 @@ export function AggregatePanel({ nodeId , connectedNode}: AggregatePanelProps) {
     setNewAggregateFunction({
       aggregation: '',
       field: '',
-      filterBy: '',
+      filterBy: [],
       timeValue: 5,
       timeUnit: 'Second',
     });
@@ -79,11 +104,22 @@ export function AggregatePanel({ nodeId , connectedNode}: AggregatePanelProps) {
   };
 
   const handleSave = () => {
-    // Implement save functionality here
-    console.log('Aggregate functions saved:', aggregateFunctions);
+    const result = transformAggregation(aggregateFunctions, connectedNode?.data?.options?.schema?.fields);
+    updateNodeData(nodeId, result );
+    dismissPanel()
   };
 
-  const options = connectedNode?.data?.options?.schema?.fields?.map((field: any) => ({ key: field.name, text: field.name }));
+  const options = useMemo(() => {
+    return connectedNode?.data?.options?.schema?.fields?.map((field: any) => ({ key: field.name, text: field.name }));
+  }, [connectedNode?.data?.options?.schema?.fields]);
+
+  const filterByOptions = useMemo(() => {
+    return options?.filter((option:any) => option.key !== newAggregateFunction.field);
+  }, [options, newAggregateFunction.field]);
+
+  const isAddDisabled = useMemo(() => {
+    return !newAggregateFunction.aggregation || !newAggregateFunction.field || !newAggregateFunction.timeValue || !newAggregateFunction.timeUnit;
+  }, [newAggregateFunction]);
 
   return (
     <div>
@@ -106,9 +142,15 @@ export function AggregatePanel({ nodeId , connectedNode}: AggregatePanelProps) {
           />
           <Dropdown
             label="Filter by"
-            selectedKey={newAggregateFunction.filterBy}
-            onChange={(e, option) => setNewAggregateFunction({ ...newAggregateFunction, filterBy: option?.key as string })}
-            options={options} // Add filter options dynamically if needed
+            selectedKeys={newAggregateFunction.filterBy}
+            onChange={(e, option) => {
+              const selectedKeys = option?.selected
+                ? [...newAggregateFunction.filterBy, option.key as string]
+                : newAggregateFunction.filterBy.filter(key => key !== option?.key);
+              setNewAggregateFunction({ ...newAggregateFunction, filterBy: selectedKeys });
+            }}
+            multiSelect
+            options={filterByOptions}
           />
           <Stack horizontal tokens={{ childrenGap: 10 }}>
             <TextField
@@ -124,7 +166,7 @@ export function AggregatePanel({ nodeId , connectedNode}: AggregatePanelProps) {
             />
           </Stack>
           <Stack horizontal tokens={{ childrenGap: 10 }}>
-            <PrimaryButton text={editIndex !== null ? "Update" : "Add"} onClick={handleAddAggregateFunction} />
+            <PrimaryButton text={editIndex !== null ? "Update" : "Add"} onClick={handleAddAggregateFunction} disabled={isAddDisabled} />
             <DefaultButton text="Discard" onClick={handleDiscard} />
           </Stack>
         </Stack>
@@ -132,7 +174,7 @@ export function AggregatePanel({ nodeId , connectedNode}: AggregatePanelProps) {
       <ul>
         {aggregateFunctions.map((func, index) => (
           <li key={index}>
-            {func.aggregation} of {func.field} filtered by {func.filterBy} within the last {func.timeValue} {func.timeUnit}
+            {func.aggregation} of {func.field} filtered by {func.filterBy.join(', ')} within the last {func.timeValue} {func.timeUnit}
             <IconButton iconProps={{ iconName: 'Edit' }} onClick={() => handleEdit(index)} />
             <IconButton iconProps={{ iconName: 'Delete' }} onClick={() => handleDelete(index)} />
           </li>

@@ -35,13 +35,13 @@ export function ConnectingForm({ nodeId,
   const onSubmit = (data: any) => {
     data.options.location.path = `/mnt/data/source/${nodeId}`;
     updateNodeData(nodeId,data);
+    dismissPanel();
   };
 
   const handleCancel = () => {
     dismissPanel();
   };
 
-  console.log(form.formState.errors);
 
   return (
     <form

@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { ConnectionFormProvider } from "./ConnectionForm/ConnectionFormProvider";
 
 interface FileWriterPanelProps {
@@ -6,13 +5,9 @@ interface FileWriterPanelProps {
 }
 
 export function FileWriterPanel({ nodeId }: FileWriterPanelProps) {
-
-
-  
- 
   return (
     <>
-          <ConnectionFormProvider    nodeId={nodeId}  />
+      <ConnectionFormProvider nodeId={nodeId} />
     </>
   );
-};
+}

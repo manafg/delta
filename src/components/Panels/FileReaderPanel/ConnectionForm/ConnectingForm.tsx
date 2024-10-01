@@ -46,8 +46,6 @@ export function ConnectingForm({ nodeId,
     dismissPanel();
   };
 
-  console.log(form.formState.errors);
-
   return (
     <form
       autoComplete="off"
