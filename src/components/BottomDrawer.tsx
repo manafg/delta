@@ -1,12 +1,12 @@
 import React from 'react';
-import { Panel, PanelType, IconButton, Stack, Pivot, PivotItem, IStyleFunction, IPanelStyles } from '@fluentui/react';
+import { Panel, PanelType, IconButton, Stack, Pivot, PivotItem, IStyleFunction, IPanelStyles, DetailsList, IColumn } from '@fluentui/react';
+import { useDrawer } from './DrawerContext'; // Import the context hook
+import { getJobPreview } from '../api/jobPreview';
+import { useState, useEffect } from 'react';
 
-interface DrawerPanelProps {
-  isOpen: boolean;
-  onDismiss: () => void;
-}
+const DrawerPanel: React.FC = () => {
+  const { isOpen, closeDrawer, jobId, unitId } = useDrawer();
 
-const DrawerPanel: React.FC<DrawerPanelProps> = ({ isOpen, onDismiss }) => {
   const panelStyles: IStyleFunction<{}, IPanelStyles> = () => ({
     main: {
       marginBottom: 0,
@@ -15,7 +15,6 @@ const DrawerPanel: React.FC<DrawerPanelProps> = ({ isOpen, onDismiss }) => {
       left: '200px',
       boxShadow: 'none',
       borderTop: '1px solid #eee',
-      // Override .main-236 class
       selectors: {
         '&.main-236': {
           boxShadow: 'none',
@@ -34,10 +33,33 @@ const DrawerPanel: React.FC<DrawerPanelProps> = ({ isOpen, onDismiss }) => {
     },
   });
 
+  const [dataPreview, setDataPreview] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (isOpen && jobId && unitId) {
+      const fetchDataPreview = async () => {
+        const previewData = await getJobPreview(jobId ?? '', unitId ?? '');
+        console.log('previewData', previewData)
+        setDataPreview(previewData);
+      };
+
+      fetchDataPreview();
+    }
+  }, [isOpen, jobId, unitId]);
+
+  const columns: IColumn[] = dataPreview.length > 0 ? Object.keys(dataPreview[0]).map(key => ({
+    key: key,
+    name: key,
+    fieldName: key,
+    minWidth: 100,
+    maxWidth: 200,
+    isResizable: true,
+  })) : [];
+
   return (
     <Panel
       isOpen={isOpen}
-      onDismiss={onDismiss}
+      onDismiss={closeDrawer}
       type={PanelType.custom}
       customWidth="calc(100% - 200px)"
       isBlocking={false}
@@ -52,14 +74,31 @@ const DrawerPanel: React.FC<DrawerPanelProps> = ({ isOpen, onDismiss }) => {
         }
       }}>
         <Pivot>
-          <PivotItem headerText="Data preview" />
+          <PivotItem headerText="Data preview">
+            <div style={{ padding: '20px' }}>
+              {dataPreview.length > 0 ? (
+                <DetailsList
+                  items={dataPreview}
+                  columns={columns}
+                  setKey="set"
+                  layoutMode={0}
+                  selectionPreservedOnEmptyClick={true}
+                  ariaLabelForSelectionColumn="Toggle selection"
+                  ariaLabelForSelectAllCheckbox="Toggle selection for all items"
+                  checkButtonAriaLabel="Row checkbox"
+                />
+              ) : (
+                <p>No data available</p>
+              )}
+            </div>
+          </PivotItem>
           <PivotItem headerText="Authoring errors" />
           <PivotItem headerText="Runtime logs" />
           <PivotItem headerText="Metrics" />
         </Pivot>
         <IconButton
           iconProps={{ iconName: 'ChevronDown' }}
-          onClick={onDismiss}
+          onClick={closeDrawer}
           styles={{
             root: {
               color: '#666',

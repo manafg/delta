@@ -185,6 +185,7 @@ const PipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , onAdd
     debugger
      if (pipelineId && graph) {
        const res = await startJob(pipelineId, graph);
+       localStorage.setItem('jobid', res.id);
        console.log('Pipeline updated', res);
      } 
      // localStorage.setItem('pipeline', JSON.stringify(data));

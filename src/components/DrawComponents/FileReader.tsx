@@ -1,11 +1,12 @@
-import React from 'react';
-import { Text, Stack, Separator } from '@fluentui/react';
+import React, { useState } from 'react';
+import { Text, Stack, Separator, ContextualMenu, IContextualMenuProps } from '@fluentui/react';
 import { Card } from '@fluentui/react-cards';
 import { Handle, Position, NodeProps } from '@xyflow/react';
 import { FileArrowUp } from '@phosphor-icons/react';
 import { usePanel } from '../Panels/PanelProvider';
 import FileReaderPanel from '../Panels/FileReaderPanel/FileReaderPanel';
 import { useNodesData  } from '@xyflow/react';
+import { useDrawer } from '../DrawerContext';
 
 interface FileReaderProps extends NodeProps {
   nodeId?: string;
@@ -38,31 +39,80 @@ const textStyles = {
 const FileReader: React.FC<FileReaderProps> = ({ id }) => {
   const nodeData: any = useNodesData(id?.toString() ?? '');
   const { openPanel } = usePanel();
+  const { openDrawer } = useDrawer();
+
   const valid = nodeData?.data?.options?.location?.physical_path && nodeData?.data?.options?.schema?.fields?.length > 0;
-  
+
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+  const handleRightClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+    setMenuPosition({ x: event.clientX, y: event.clientY });
+    setMenuVisible(true);
+  };
+
+  const handleMenuClose = () => {
+    setMenuVisible(false);
+  };
+
+  const handlePlayButtonClick = () => {
+    const jobid = localStorage.getItem('jobid');
+    openDrawer(jobid ?? '', id ?? '');
+    handleMenuClose();
+  };
+
+  const handleEditButtonClick = () => {
+    openPanel('filereader', <FileReaderPanel nodeId={id?.toString() ?? ''} />, 'filereader', 'File Reader')
+    handleMenuClose();
+  };
+
+  const menuProps: IContextualMenuProps = {
+    items: [
+      {
+        key: 'play',
+        text: 'Play',
+        onClick: handlePlayButtonClick,
+      },
+      {
+        key: 'edit',
+        text: 'Edit',
+        onClick: handleEditButtonClick,
+      },
+      // Add more menu items here if needed
+    ],
+    target: { x: menuPosition.x, y: menuPosition.y },
+    onDismiss: handleMenuClose,
+    directionalHintFixed: true,
+  };
+
   return (
-    <Card
-      className="file-reader-node"
-      tokens={{ childrenGap: 10, padding: 10 }}
-      styles={cardStyles(valid)}
-      onClick={() => openPanel('filereader', <FileReaderPanel nodeId={id?.toString() ?? ''} />, 'filereader', 'File Reader')}
-    >
-      <Handle type="source" position={Position.Right} />
+    <div>
+      <Card
+        className="file-reader-node"
+        tokens={{ childrenGap: 10, padding: 10 }}
+        styles={cardStyles(valid)}
+        onClick={() => openPanel('filereader', <FileReaderPanel nodeId={id?.toString() ?? ''} />, 'filereader', 'File Reader')}
+        onContextMenu={handleRightClick}
+      >
+        <Handle type="source" position={Position.Right} />
 
-      <Stack horizontal tokens={{ childrenGap: 10 }} verticalAlign="center">
-        <FileArrowUp weight="fill" style={fileArrowUpStyles} />
-        <Text variant="large">File Reader</Text>
-      </Stack>
+        <Stack horizontal tokens={{ childrenGap: 10 }} verticalAlign="center">
+          <FileArrowUp weight="fill" style={fileArrowUpStyles} />
+          <Text variant="large">File Reader</Text>
+        </Stack>
 
-      <Separator styles={separatorStyles} />
+        <Separator styles={separatorStyles} />
 
-      <Stack horizontal tokens={{ childrenGap: 10 }} horizontalAlign="space-between">
-        <Text style={textStyles}>{nodeData?.data?.options?.location?.physical_path ?? 'No path'}</Text>
-        <Text style={{ ...textStyles, textTransform: 'capitalize' }} variant="medium">
-          {nodeData?.data?.options?.location?.share_type ?? 'No type'}
-        </Text>
-      </Stack>
-    </Card>
+        <Stack horizontal tokens={{ childrenGap: 10 }} horizontalAlign="space-between">
+          <Text style={textStyles}>{nodeData?.data?.options?.location?.physical_path ?? 'No path'}</Text>
+          <Text style={{ ...textStyles, textTransform: 'capitalize' }} variant="medium">
+            {nodeData?.data?.options?.location?.share_type ?? 'No type'}
+          </Text>
+        </Stack>
+      </Card>
+
+      {menuVisible && <ContextualMenu {...menuProps} />}
+    </div>
   );
 };
 

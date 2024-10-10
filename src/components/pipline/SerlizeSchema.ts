@@ -47,6 +47,19 @@ export function SerlizeSchema(nodes: Node[], edges: Edge[]) {
 
 export function DeserializeSchema(data: { blocks: any[], connections: any[] }) {
     const nodes = data.blocks.map(block => {
+        if(block.type === 'aggregate'){
+            const { id, type, metaData, options, schema } = block;
+            const node: Node = {
+                id,
+                type,
+                position: metaData.position, // Correctly map position from metaData
+                data: {
+                    options,
+                    schema
+                },
+            }
+            return node;
+        }
         const { id, type, metaData, options, stream_options,  } = block;
         const { schema} = block.options;
         debugger

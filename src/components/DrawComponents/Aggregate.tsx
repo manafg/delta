@@ -1,12 +1,14 @@
 import React from "react";
 import { Handle, Position, useReactFlow } from "@xyflow/react";
-import { Text, Stack, Icon, Separator } from "@fluentui/react";
+import { Text, Stack, Icon, Separator, ContextualMenu, IContextualMenuProps  } from "@fluentui/react";
 import { Card } from "@fluentui/react-cards";
 import { FontIcon } from "@fluentui/react/lib/Icon";
 import { NodeProps } from "@xyflow/react";
 import { usePanel } from "../Panels/PanelProvider";
 import { AggregatePanel } from "../Panels/AggregatePanel/AggregatePanel";
 import { useState, useEffect } from "react";
+import { useDrawer } from '../DrawerContext';
+
 interface AggregateProps extends NodeProps {
   onClick?: () => void;
 }
@@ -14,11 +16,55 @@ interface AggregateProps extends NodeProps {
 const Aggregate: React.FC<AggregateProps> = (props:any) => {
   const { openPanel } = usePanel();
   
+  const { openDrawer } = useDrawer();
 
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+
+  const handleRightClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+    setMenuPosition({ x: event.clientX, y: event.clientY });
+    setMenuVisible(true);
+  };
+
+  const handleMenuClose = () => {
+    setMenuVisible(false);
+  };
+
+  const handlePlayButtonClick = () => {
+    const jobid = localStorage.getItem('jobid');
+    openDrawer(jobid ?? '', props.id ?? '');
+    handleMenuClose();
+  };
+
+  const handleEditButtonClick = () => {
+    openPanel('aggregate', <AggregatePanel nodeId={props.id} />, 'aggregate', 'Aggregate')
+    handleMenuClose();
+  };
+
+  const menuProps: IContextualMenuProps = {
+    items: [
+      {
+        key: 'play',
+        text: 'Play',
+        onClick: handlePlayButtonClick,
+      },
+      {
+        key: 'edit',
+        text: 'Edit',
+        onClick: handleEditButtonClick,
+      },
+      // Add more menu items here if needed
+    ],
+    target: { x: menuPosition.x, y: menuPosition.y },
+    onDismiss: handleMenuClose,
+    directionalHintFixed: true,
+  };
 
 
 
   return (
+    <>
     <Card
       className="aggregate-node"
       tokens={{ childrenGap: 10, padding: 10 }}
@@ -30,6 +76,7 @@ const Aggregate: React.FC<AggregateProps> = (props:any) => {
           cursor: "pointer",
         },
       }}
+      onContextMenu={handleRightClick}
       onClick={() =>
         openPanel(
           "aggregate",
@@ -58,6 +105,8 @@ const Aggregate: React.FC<AggregateProps> = (props:any) => {
         <Text>Sum</Text>
       </Stack>
     </Card>
+    {menuVisible && <ContextualMenu {...menuProps} />}
+    </>
   );
 };
 

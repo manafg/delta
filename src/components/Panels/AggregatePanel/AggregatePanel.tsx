@@ -19,7 +19,7 @@ interface AggregateFunction {
 
 const aggregationOptions: IDropdownOption[] = [
   { key: 'sum', text: 'Sum' },
-  { key: 'average', text: 'average' },
+  { key: 'avg', text: 'average' },
   { key: 'min', text: 'minimum' },
   { key: 'max', text: 'maximum' },
   // Add more options as needed
@@ -50,6 +50,7 @@ export function AggregatePanel({ nodeId }: AggregatePanelProps) {
   const { dismissPanel } = usePanel()
 
   useEffect(()=>{
+    debugger
     const node = getNode(nodeId);
     if (node?.data && Object.keys(node.data).length > 0) {
     const { input } = reverseTransformAggregation(node?.data);
@@ -58,6 +59,7 @@ export function AggregatePanel({ nodeId }: AggregatePanelProps) {
   },[getNode, nodeId])
 
   useEffect(() => {
+    debugger
     const edges = getEdges();
     const incomingEdge = edges.find(edge => edge.target === nodeId);
     if (incomingEdge) {

@@ -15,7 +15,6 @@ import PipelineHeader from "../components/pipline/PiplineHeader";
 import FileReader from "../components/DrawComponents/FileReader";
 import Aggregate from "../components/DrawComponents/Aggregate";
 import FileWriter from "../components/DrawComponents/FileWriter";
-import BottomDrawer from "../components/BottomDrawer";
 import { FloatingButton } from "../Styles";
 import { Edge, Node } from "@xyflow/react";
 import { DnDProvider, useDnD } from "../context/Cnavas";
@@ -23,8 +22,11 @@ import { PanelProvider } from "../components/Panels/PanelProvider";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect } from "react";
 import { DeserializeSchema } from "../components/pipline/SerlizeSchema";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 import { getPipeline } from "../api/getPipline";
+import { DrawerProvider } from "../components/DrawerContext";
+import DrawerPanel from "../components/BottomDrawer";
+
 const initialNodes: Node[] = [];
 
 const initialEdges: Edge[] = [];
@@ -35,7 +37,7 @@ const nodeTypes = {
   file_writer: FileWriter,
 };
 
-const getId = () => uuidv4().replace(/-/g, '');
+const getId = () => uuidv4().replace(/-/g, "");
 
 const adjustedType = (type: string) => {
   if (type === "fileReader") {
@@ -50,7 +52,7 @@ const adjustedType = (type: string) => {
 };
 
 const CreatePipeline = () => {
-  const [nodes, setNodes, onNodesChange ] = useNodesState(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [graph, setGraph] = useState(null);
@@ -63,13 +65,13 @@ const CreatePipeline = () => {
       const res = await getPipeline(id as string);
       if (res.graph) {
         setGraph(res.graph);
-        const {nodes, edges} = DeserializeSchema(JSON.parse(res.graph));
+        const { nodes, edges } = DeserializeSchema(JSON.parse(res.graph));
         setNodes(nodes);
         setEdges(edges);
       }
     }
     fetchData();
-  }, [id]);
+  }, [id, setNodes, setEdges, setGraph]);
 
   const onConnect = useCallback(
     (params: any) => setEdges((eds) => addEdge(params, eds)),
@@ -128,7 +130,7 @@ const CreatePipeline = () => {
         onClick={toggleDrawer}
         styles={FloatingButton}
       />
-      <BottomDrawer isOpen={isDrawerOpen} onDismiss={toggleDrawer} />
+      <DrawerPanel />
     </>
   );
 };
@@ -137,9 +139,11 @@ export default () => {
   return (
     <ReactFlowProvider>
       <DnDProvider>
-        <PanelProvider>
-          <CreatePipeline />
-        </PanelProvider>
+        <DrawerProvider>
+          <PanelProvider>
+            <CreatePipeline />
+          </PanelProvider>
+        </DrawerProvider>
       </DnDProvider>
     </ReactFlowProvider>
   );

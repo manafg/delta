@@ -26,7 +26,7 @@ const navLinkGroups = [
             ],
           },
           {
-            name: 'Triggers',
+            name: 'Jobs',
             url: '/triggers',
             icon: 'LightningBolt',
           },
