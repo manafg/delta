@@ -3,6 +3,7 @@ import { DetailsList,
     MessageBar, MessageBarType, DetailsListLayoutMode, IColumn, SelectionMode, Pivot, PivotItem, IconButton, ISelection, Selection, TextField } from '@fluentui/react';
 import { fetchPipelineList } from '../../api/pilpelineListing';
 import useDelete  from '../../api/delete';
+import { useNavigate } from 'react-router-dom';
 
 interface Pipeline {
     id: string;
@@ -30,7 +31,7 @@ function PipelineListing() {
     const [selectedItems, setSelectedItems] = useState<Pipeline[]>([]);
     const { deleteRequest , isLoading , error } = useDelete();
     const [toast, setToast] = useState<{ message: string, type: MessageBarType } | null>(null);
-
+    const navigate = useNavigate();
     const selection = useMemo(
         () =>
             new Selection({
@@ -91,6 +92,10 @@ function PipelineListing() {
         setSearchText(newValue || '');
     };
 
+    const handleItemClick = (item: Pipeline) => {
+        navigate(`/create-pipeline/${item.id}`);
+    };
+
     return (
         <div>
             <h1>Pipeline Listing</h1>
@@ -108,9 +113,7 @@ function PipelineListing() {
                         layoutMode={DetailsListLayoutMode.justified}
                         selectionMode={SelectionMode.single}
                         selection={selection}
-                        onItemInvoked={item => {
-                            selection.setKeySelected(item.id, true, false);
-                        }}
+                        onItemInvoked={handleItemClick}
                     />
                 </PivotItem>
                 <PivotItem headerText="Published pipelines" itemKey="published">
