@@ -109,7 +109,6 @@ function PipelineListing() {
                         selectionMode={SelectionMode.single}
                         selection={selection}
                         onItemInvoked={item => {
-                            console.log(item);
                             selection.setKeySelected(item.id, true, false);
                         }}
                     />
@@ -128,7 +127,6 @@ function PipelineListing() {
                         selectionMode={SelectionMode.single}
                         selection={selection}
                         onItemInvoked={item => {
-                            console.log(item);
                             selection.setKeySelected(item.id, true, false);
                         }}
                     />

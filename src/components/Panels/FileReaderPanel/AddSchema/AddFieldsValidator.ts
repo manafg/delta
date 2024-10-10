@@ -14,7 +14,7 @@ const useSchema = () => {
             fields: yup.array().of(
               yup.object().shape({
                 name: yup.string().required(),
-                type: yup.string().oneOf(['string', 'int', 'double', 'timestamp' , 'boolean']).required(),
+                type: yup.string().oneOf(['string', 'integer', 'double', 'timestamp' , 'boolean']).required(),
               })
             ).required(),
           }),

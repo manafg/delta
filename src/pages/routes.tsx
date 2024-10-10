@@ -10,7 +10,7 @@ import CreatePipeline from './CreatePipeline';
 
 function PrivateRoute({ element, ...rest }: { element: ReactElement }) {
   const token = localStorage.getItem('token');
-  return token ? element : element;//<Navigate to="/login" />;
+  return token ? element : <Navigate to="/login" />;
 }
 
 function RoutesComponent() {
@@ -23,7 +23,7 @@ function RoutesComponent() {
           <Route path="triggers" element={<Triggers />} />
           <Route path="alert" element={<Alert />} />
           <Route path="pipelines" element={<Pipelines />} />
-          <Route path="create-pipeline" element={<CreatePipeline />} />
+          <Route path="/create-pipeline/:id" element={<CreatePipeline />} />
         </Route>
       </Routes>
     </Router>

@@ -11,7 +11,7 @@ const useSchema = () => {
       options: yup.object().shape({
         location: yup.object().shape({
           physical_path: yup.string().required('Physical path is required'),
-          share_type: yup.string().oneOf(['smb', 'nfs'], 'Invalid share type'),
+          share_type: yup.string().oneOf(['smb', 'nfs', 'local'], 'Invalid share type'),
           authentication: yup.object().shape({
             authRequired: yup.boolean().nullable(),
             username: yup.string().when('$authRequired', ([authRequired]) => 
@@ -42,14 +42,14 @@ const useDefaultValues = (): any => ({
     location:{
       path: '',
       physical_path: '',
-      share_type: 'smb',
+      share_type: 'local',
       authentication: {
         authRequired: false,
         username: '',
         password: '',
       },
     },
-    mode: "w",
+    mode: "rw",
     format: 'csv',
     options: {
       header: 'true',
@@ -59,7 +59,7 @@ const useDefaultValues = (): any => ({
   stream_options: {
     enabled: false,
     maxFilesPerTrigger: 1,
-    timestamp_col: "event_time", 
+    timestamp_col: "EntryTime", 
   },
 });
 

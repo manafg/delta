@@ -32,7 +32,6 @@ export const DropDown: React.FC<DropDownProps> = ({
         options={options}
         selectedKey={field?.value ?? ''}
         onChange={(event, option) => {
-            debugger
             setValue(name, option?.key)}}
         errorMessage={errorMessage}
       />

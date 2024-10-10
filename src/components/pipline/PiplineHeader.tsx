@@ -1,15 +1,26 @@
-import React from 'react';
+import React , { useEffect } from 'react';
 import { CommandBar, ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { useDnD } from '../../context/Cnavas';
+import { useNodes , useEdges } from '@xyflow/react';
+import { useCallback } from 'react';
+import { SerlizeSchema } from './SerlizeSchema';
+import { updatePipelineGraph } from '../../api/updatePipelineGraph';
+import { startJob } from '../../api/startJob';
 interface PipelineHeaderProps {
   onAddFileReader?: () => void;
   onAddFileWriter?: () => void;
   onAddAggregate?: () => void;
+  pipelineId?: string;
+  graph?: any;
 }
 
-const PipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , onAddFileWriter, onAddAggregate}) => {
+const PipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , onAddFileWriter, onAddAggregate, pipelineId, graph}) => {
+
   const [_, setType] = useDnD();
-  
+  const nodes = useNodes();
+  const edges = useEdges();
+
+
   const onDragStart = (event: React.DragEvent<HTMLDivElement>, nodeType: string ) => {
     if (setType) {
       setType(nodeType);
@@ -144,13 +155,13 @@ const PipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , onAdd
       key: 'save',
       text: 'Save',
       iconProps: { iconName: 'Save' },
-      onClick: () => console.log('Save clicked'),
+      onClick: () => handleSavePipeline(),
     },
     {
       key: 'start',
       text: 'Start',
       iconProps: { iconName: 'Play' },
-      onClick: () => console.log('Start clicked'),
+      onClick: () => handleStartPipeline(),
     },
     {
       key: 'feedback',
@@ -159,6 +170,25 @@ const PipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , onAdd
       onClick: () => console.log('Feedback clicked'),
     },
   ];
+
+  const handleSavePipeline = useCallback(async () => {
+   const data = SerlizeSchema(nodes, edges);
+    if (pipelineId) {
+     debugger 
+      const res = await updatePipelineGraph(pipelineId, data);
+      console.log('Pipeline updated', res);
+    } 
+    // localStorage.setItem('pipeline', JSON.stringify(data));
+  }, [nodes, edges , pipelineId]);
+
+  const handleStartPipeline = useCallback(async () => {
+    debugger
+     if (pipelineId && graph) {
+       const res = await startJob(pipelineId, graph);
+       console.log('Pipeline updated', res);
+     } 
+     // localStorage.setItem('pipeline', JSON.stringify(data));
+   }, [graph , pipelineId]);
 
   return (
     <div>

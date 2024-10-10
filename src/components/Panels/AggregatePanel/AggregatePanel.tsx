@@ -19,17 +19,16 @@ interface AggregateFunction {
 
 const aggregationOptions: IDropdownOption[] = [
   { key: 'sum', text: 'Sum' },
-  { key: 'average', text: 'Average' },
-  { key: 'min', text: 'Minimum' },
-  { key: 'max', text: 'Maximum' },
+  { key: 'average', text: 'average' },
+  { key: 'min', text: 'minimum' },
+  { key: 'max', text: 'maximum' },
   // Add more options as needed
 ];
 
 const timeUnitOptions: IDropdownOption[] = [
-  { key: 'Second', text: 'Second' },
-  { key: 'Minute', text: 'Minute' },
-  { key: 'Hour', text: 'Hour' },
-  // Add more options as needed
+  { key: 'second', text: 'second' },
+  { key: 'minute', text: 'minute' },
+  { key: 'hour', text: 'hour' },
 ];
 
 export function AggregatePanel({ nodeId }: AggregatePanelProps) {
@@ -42,7 +41,7 @@ export function AggregatePanel({ nodeId }: AggregatePanelProps) {
     field: '',
     filterBy: [],
     timeValue: 5,
-    timeUnit: 'Second',
+    timeUnit: 'second',
   });
 
   const { getEdges, getNode } = useReactFlow();
@@ -51,7 +50,6 @@ export function AggregatePanel({ nodeId }: AggregatePanelProps) {
   const { dismissPanel } = usePanel()
 
   useEffect(()=>{
-    debugger
     const node = getNode(nodeId);
     if (node?.data && Object.keys(node.data).length > 0) {
     const { input } = reverseTransformAggregation(node?.data);
@@ -83,7 +81,7 @@ export function AggregatePanel({ nodeId }: AggregatePanelProps) {
       field: '',
       filterBy: [],
       timeValue: 5,
-      timeUnit: 'Second',
+      timeUnit: 'second',
     });
   };
 
@@ -105,6 +103,7 @@ export function AggregatePanel({ nodeId }: AggregatePanelProps) {
 
   const handleSave = () => {
     const result = transformAggregation(aggregateFunctions, connectedNode?.data?.options?.schema?.fields);
+    console.log('result', result)
     updateNodeData(nodeId, result );
     dismissPanel()
   };

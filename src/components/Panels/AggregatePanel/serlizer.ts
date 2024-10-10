@@ -1,8 +1,9 @@
 export function transformAggregation(input: any, oldSchema: any) {
+
     const newAggregations = input.map((item: any) => ({
         column: item.field,
         aggregate: item.aggregation,
-        groupByCols: item.filterBy,
+        filter: item.filterBy,
         interval: `${item.timeValue} ${item.timeUnit}`
     }));
 
@@ -25,7 +26,10 @@ export function transformAggregation(input: any, oldSchema: any) {
 
     return {
         options: {
-            aggregations: newAggregations
+            streaming: {
+                timestampCol: "EntryTime", // Adjust this as needed
+                aggregations: newAggregations
+            }
         },
         schema: {
             fields: newFields
@@ -34,15 +38,14 @@ export function transformAggregation(input: any, oldSchema: any) {
 }
 
 export function reverseTransformAggregation(transformed: any) {
-    const { options: { aggregations }, schema: { fields } } = transformed;
+    const { options: { streaming: { aggregations } }, schema: { fields } } = transformed;
 
     const input = aggregations.map((agg: any) => {
         const [field, aggregate] = agg.column.split('_');
-        debugger
         return {
             aggregation: agg.aggregate,
             field,
-            filterBy: agg.groupByCols,
+            filterBy: agg.filter,
             timeUnit: agg.interval.split(' ')[1],
             timeValue: parseInt(agg.interval.split(' ')[0], 10)
         };

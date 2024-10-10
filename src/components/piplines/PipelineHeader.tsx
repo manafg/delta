@@ -1,12 +1,20 @@
-import React from 'react';
+import React , { useCallback} from 'react';
 import { Stack, Text, Icon, IconButton } from '@fluentui/react';
 import { initializeIcons } from '@fluentui/font-icons-mdl2';
 import { useNavigate } from 'react-router-dom';
-
+import { createPipeline } from '../../api/newPipeline';
 initializeIcons();
 
 const PipelineHeader: React.FC = () => {
     const navigate = useNavigate();
+
+    const handleClick = useCallback(async () => {
+        const pipeline = await createPipeline();
+        debugger
+        if (pipeline) {
+            navigate(`/create-pipeline/${pipeline.id}`);
+        }
+    }, [navigate]);
 
     return (
         <Stack tokens={{ childrenGap: 20 }} styles={{ root: { padding: 20 } }}>
@@ -33,7 +41,7 @@ const PipelineHeader: React.FC = () => {
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'white')}
-                    onClick={() => navigate('/create-pipeline')}
+                    onClick={handleClick}
                 >
                     <IconButton iconProps={{ iconName: 'Add' }} styles={{ root: { fontSize: 40 } }} />
                     <Text>Create a new empty pipeline</Text>

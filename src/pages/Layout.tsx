@@ -38,48 +38,6 @@ const navLinkGroups = [
         ],
         isExpanded: true,
       },
-      {
-        name: 'Monitoring',
-        links: [
-          {
-            name: 'Pipeline Jobs',
-            url: '/pipeline-jobs',
-            icon: 'Processing',
-          },
-          {
-            name: 'Real-time Jobs',
-            url: '/real-time-jobs',
-            icon: 'TestBeakerSolid',
-          },
-          {
-            name: 'Alerts & Metrics',
-            url: '/alerts-metrics',
-            icon: 'BarChart4',
-          },
-        ],
-        isExpanded: true,
-      },
-      {
-        name: 'Manage',
-        links: [
-          {
-            name: 'Triggers',
-            url: '/manage-triggers',
-            icon: 'LightningBolt',
-          },
-          {
-            name: 'Connections',
-            url: '/connections',
-            icon: 'PlugConnected',
-          },
-          {
-            name: 'Alerts & Metrics',
-            url: '/manage-alerts-metrics',
-            icon: 'BarChart4',
-          },
-        ],
-        isExpanded: true,
-      },
     ],
   },
 ];

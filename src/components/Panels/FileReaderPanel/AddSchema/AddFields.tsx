@@ -15,7 +15,7 @@ import { usePanel } from '../../PanelProvider';
 
 const fieldTypes = [
   { key: "string", text: "string" },
-  { key: "int", text: "int" },
+  { key: "integer", text: "integer" },
   { key: "double", text: "double" },
   { key: "timestamp", text: "timestamp" },
   { key: "boolean", text: "boolean" },
@@ -36,7 +36,7 @@ export function AddFields({ setStep, nodeId }: Props) {
   const [fields, setFields] = useState(nodeData?.data?.options?.schema?.fields ?? [{ name: "", type: "" }]);
 
   const handleAddField = () => {
-    setFields([...fields, { name: "", type: "" }]);
+    setFields([...fields, { name: "", type: "" , nullable: true, metadata: {}}]);
   };
 
   const handleRemoveField = (index: number) => {
@@ -65,6 +65,8 @@ export function AddFields({ setStep, nodeId }: Props) {
                 fields: fields.map((field:any) => ({
                     name: field.name,
                     type: field.type,
+                    nullable: true,
+                    metadata: {}
                 })),
             },
         },
