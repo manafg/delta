@@ -38,7 +38,6 @@ export function transformAggregation(input: any, oldSchema: any) {
 }
 
 export function reverseTransformAggregation(transformed: any) {
-    debugger
     const { options: { streaming: { aggregations } }, schema: { fields } } = transformed;
 
     const input = aggregations.map((agg: any) => {

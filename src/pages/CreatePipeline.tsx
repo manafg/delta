@@ -3,15 +3,13 @@ import {
   ReactFlowProvider,
   useNodesState,
   useEdgesState,
-  useNodes,
-  useEdges,
   addEdge,
   useReactFlow,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useCallback, useState } from "react";
 import { ActionButton } from "@fluentui/react";
-import PipelineHeader from "../components/pipline/PiplineHeader";
+import GraphPipelineHeader from "../components/pipline/GraphPiplineHeader";
 import FileReader from "../components/DrawComponents/FileReader";
 import Aggregate from "../components/DrawComponents/Aggregate";
 import FileWriter from "../components/DrawComponents/FileWriter";
@@ -26,7 +24,8 @@ import { useParams } from "react-router-dom";
 import { getPipeline } from "../api/getPipline";
 import { DrawerProvider } from "../components/DrawerContext";
 import DrawerPanel from "../components/BottomDrawer";
-
+import { JobIdProvider } from "../context/GraphContext";
+import { useJobId } from "../context/GraphContext";
 const initialNodes: Node[] = [];
 
 const initialEdges: Edge[] = [];
@@ -55,7 +54,7 @@ const CreatePipeline = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [graph, setGraph] = useState(null);
+  const { setGraph } = useJobId();
   const [type] = useDnD();
   const { screenToFlowPosition } = useReactFlow();
   const { id } = useParams();
@@ -114,7 +113,7 @@ const CreatePipeline = () => {
 
   return (
     <>
-      <PipelineHeader pipelineId={id} graph={graph} />
+      <GraphPipelineHeader pipelineId={id} />
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -138,13 +137,15 @@ const CreatePipeline = () => {
 export default () => {
   return (
     <ReactFlowProvider>
-      <DnDProvider>
-        <DrawerProvider>
-          <PanelProvider>
-            <CreatePipeline />
-          </PanelProvider>
-        </DrawerProvider>
-      </DnDProvider>
+      <JobIdProvider>
+        <DnDProvider>
+          <DrawerProvider>
+            <PanelProvider>
+              <CreatePipeline />
+            </PanelProvider>
+          </DrawerProvider>
+        </DnDProvider>
+      </JobIdProvider>
     </ReactFlowProvider>
   );
 };

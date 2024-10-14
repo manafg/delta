@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useNodesData } from '@xyflow/react';
+import { useState, useEffect, useMemo } from 'react';
 import { DefaultButton, PrimaryButton, TextField, Dropdown, IDropdownOption, Stack, Label, IconButton } from '@fluentui/react';
 import { useReactFlow } from '@xyflow/react';
 import { transformAggregation, reverseTransformAggregation } from './serlizer';
 import { usePanel } from '../PanelProvider';
-
+import { useJobId } from '../../../context/GraphContext';
 interface AggregatePanelProps {
   nodeId: string;
 }
@@ -22,7 +21,6 @@ const aggregationOptions: IDropdownOption[] = [
   { key: 'avg', text: 'average' },
   { key: 'min', text: 'minimum' },
   { key: 'max', text: 'maximum' },
-  // Add more options as needed
 ];
 
 const timeUnitOptions: IDropdownOption[] = [
@@ -32,7 +30,6 @@ const timeUnitOptions: IDropdownOption[] = [
 ];
 
 export function AggregatePanel({ nodeId }: AggregatePanelProps) {
-  const nodeData: any = useNodesData(nodeId);
   const [aggregateFunctions, setAggregateFunctions] = useState<AggregateFunction[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
@@ -47,10 +44,9 @@ export function AggregatePanel({ nodeId }: AggregatePanelProps) {
   const { getEdges, getNode } = useReactFlow();
   const [connectedNode, setConnectedNode] = useState<any>(null);
   const { updateNodeData } = useReactFlow();
-  const { dismissPanel } = usePanel()
-
+  const { dismissPanel } = usePanel();
+  
   useEffect(()=>{
-    debugger
     const node = getNode(nodeId);
     if (node?.data && Object.keys(node.data).length > 0) {
     const { input } = reverseTransformAggregation(node?.data);
@@ -59,7 +55,6 @@ export function AggregatePanel({ nodeId }: AggregatePanelProps) {
   },[getNode, nodeId])
 
   useEffect(() => {
-    debugger
     const edges = getEdges();
     const incomingEdge = edges.find(edge => edge.target === nodeId);
     if (incomingEdge) {
@@ -105,7 +100,6 @@ export function AggregatePanel({ nodeId }: AggregatePanelProps) {
 
   const handleSave = () => {
     const result = transformAggregation(aggregateFunctions, connectedNode?.data?.options?.schema?.fields);
-    console.log('result', result)
     updateNodeData(nodeId, result );
     dismissPanel()
   };

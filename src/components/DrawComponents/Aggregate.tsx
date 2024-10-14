@@ -8,7 +8,7 @@ import { usePanel } from "../Panels/PanelProvider";
 import { AggregatePanel } from "../Panels/AggregatePanel/AggregatePanel";
 import { useState, useEffect } from "react";
 import { useDrawer } from '../DrawerContext';
-
+import { useJobId } from '../../context/GraphContext';
 interface AggregateProps extends NodeProps {
   onClick?: () => void;
 }

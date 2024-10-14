@@ -1,6 +1,5 @@
 import axios from "axios";
 export const refreshToken = async () => {
-  debugger
   try {
     const response = await axios.post(
       "https://account.kafryuba.com/connect/token",

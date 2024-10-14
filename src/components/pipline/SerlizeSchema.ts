@@ -62,7 +62,6 @@ export function DeserializeSchema(data: { blocks: any[], connections: any[] }) {
         }
         const { id, type, metaData, options, stream_options,  } = block;
         const { schema} = block.options;
-        debugger
         const node: Node = {
             id,
             type,

@@ -1,4 +1,4 @@
-import React , { useEffect } from 'react';
+import React from 'react';
 import { CommandBar, ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { useDnD } from '../../context/Cnavas';
 import { useNodes , useEdges } from '@xyflow/react';
@@ -6,17 +6,19 @@ import { useCallback } from 'react';
 import { SerlizeSchema } from './SerlizeSchema';
 import { updatePipelineGraph } from '../../api/updatePipelineGraph';
 import { startJob } from '../../api/startJob';
+import { useJobId } from '../../context/GraphContext';
+
 interface PipelineHeaderProps {
   onAddFileReader?: () => void;
   onAddFileWriter?: () => void;
   onAddAggregate?: () => void;
   pipelineId?: string;
-  graph?: any;
 }
 
-const PipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , onAddFileWriter, onAddAggregate, pipelineId, graph}) => {
-
+const GraphPipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , onAddFileWriter, onAddAggregate, pipelineId}) => {
+  const { setGraph , graph , setJobId } = useJobId();
   const [_, setType] = useDnD();
+  
   const nodes = useNodes();
   const edges = useEdges();
 
@@ -159,7 +161,7 @@ const PipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , onAdd
     },
     {
       key: 'start',
-      text: 'Start',
+      text: 'Create Job',
       iconProps: { iconName: 'Play' },
       onClick: () => handleStartPipeline(),
     },
@@ -174,22 +176,17 @@ const PipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , onAdd
   const handleSavePipeline = useCallback(async () => {
    const data = SerlizeSchema(nodes, edges);
     if (pipelineId) {
-     debugger 
       const res = await updatePipelineGraph(pipelineId, data);
-      console.log('Pipeline updated', res);
+      setGraph(JSON.stringify(data));
     } 
-    // localStorage.setItem('pipeline', JSON.stringify(data));
-  }, [nodes, edges , pipelineId]);
+  }, [nodes, edges , pipelineId , setGraph]);
 
   const handleStartPipeline = useCallback(async () => {
-    debugger
      if (pipelineId && graph) {
-       const res = await startJob(pipelineId, graph);
-       localStorage.setItem('jobid', res.id);
-       console.log('Pipeline updated', res);
+       const res = await startJob(pipelineId, graph , false);
+       setJobId(res.id);
      } 
-     // localStorage.setItem('pipeline', JSON.stringify(data));
-   }, [graph , pipelineId]);
+   }, [graph , pipelineId , setJobId]);
 
   return (
     <div>
@@ -201,4 +198,4 @@ const PipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , onAdd
   );
 };
 
-export default PipelineHeader;
+export default GraphPipelineHeader;

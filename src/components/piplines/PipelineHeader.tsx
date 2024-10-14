@@ -10,7 +10,6 @@ const PipelineHeader: React.FC = () => {
 
     const handleClick = useCallback(async () => {
         const pipeline = await createPipeline();
-        debugger
         if (pipeline) {
             navigate(`/create-pipeline/${pipeline.id}`);
         }

@@ -7,7 +7,7 @@ import { usePanel } from '../Panels/PanelProvider';
 import FileReaderPanel from '../Panels/FileReaderPanel/FileReaderPanel';
 import { useNodesData  } from '@xyflow/react';
 import { useDrawer } from '../DrawerContext';
-
+import { useJobId } from '../../context/GraphContext';
 interface FileReaderProps extends NodeProps {
   nodeId?: string;
 }
