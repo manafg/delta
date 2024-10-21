@@ -34,6 +34,7 @@ api.interceptors.response.use(
 
     // Check if the error is due to an expired token
     if (error.response.status === 401 && !originalRequest._retry) {
+      localStorage.setItem('token', '');
       originalRequest._retry = true;
       try {
         // Attempt to refresh the token

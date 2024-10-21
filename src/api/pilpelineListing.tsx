@@ -1,22 +1,29 @@
 import api from "./api";
+interface PipelineParams {
+  maxResultCount: number;
+  name: string;
+  skipCount: number;
+  sorting: string;
+  status: number;
+  userName: string;
+}
 
-
-export const fetchPipelineList = async (
-  maxResultCount = 10,
-  skipCount = 0,
-  sorting = "",
-  userName = "",
-  name = "",
-  status = 0
-) => {
+export const fetchPipelineList = async ({
+  maxResultCount,
+  skipCount,
+  sorting,
+  userName,
+  name,
+  status
+}: PipelineParams) => {
   try {
     const response = await api.post("/pipelines/list", {
-      maxResultCount: 10,
-      skipCount: 0,
-      sorting: "",
+      maxResultCount,
+      skipCount,
+      sorting,
       userName, // current username if "view my only" toggle is enabled
       name, // search text
-      status,
+      status
     });
     return response.data;
   } catch (error) {
@@ -24,5 +31,3 @@ export const fetchPipelineList = async (
     throw error;
   }
 };
-
-// ... existing code ...

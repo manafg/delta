@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { DetailsList, 
     MessageBar, MessageBarType, DetailsListLayoutMode, IColumn, SelectionMode, Pivot, PivotItem, IconButton, ISelection, Selection, TextField } from '@fluentui/react';
 import { fetchPipelineList } from '../../api/pilpelineListing';
@@ -43,17 +43,27 @@ function PipelineListing() {
             }),
         []
     );
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(10);
+    const [sortColumn, setSortColumn] = useState<string>('name');
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
-    async function loadPipelines(status: number) {
-        const response = await fetchPipelineList(status);
+    const loadPipelines = useCallback(async () => {
+        const response = await fetchPipelineList({
+            status: selectedKey === 'drafts' ? 0 : 9,
+            maxResultCount: pageSize,
+            skipCount: (currentPage - 1) * pageSize,
+            sorting: "",//`${sortDirection}`,
+            userName: '', // Add this line
+            name: searchText
+        });
         setPipelines(response.items);
         setFilteredPipelines(response.items);
-    }
+    }, [selectedKey, currentPage, pageSize, sortColumn, sortDirection, searchText]);
 
     useEffect(() => {
-        const status = selectedKey === 'drafts' ? 0 : 9;
-        loadPipelines(status);
-    }, [selectedKey]);
+        loadPipelines();
+    }, [selectedKey, currentPage, sortColumn, sortDirection, loadPipelines]);
 
     useEffect(() => {
         const filtered = pipelines.filter(pipeline => pipeline.name.toLowerCase().includes(searchText.toLowerCase()));
@@ -69,12 +79,12 @@ function PipelineListing() {
     }, [error]);
 
     const onLinkClick = (item?: PivotItem) => {
+        debugger;
         setSelectedKey(item?.props.itemKey || 'drafts');
     };
 
     const handleRefresh = async () => {
-        const status = selectedKey === 'drafts' ? 0 : 1;
-        loadPipelines(status);
+        loadPipelines();
     };
 
     const handleDelete = async () => {
@@ -96,6 +106,19 @@ function PipelineListing() {
         navigate(`/create-pipeline/${item.id}`);
     };
 
+    const handlePageChange = (newPage: number) => {
+        setCurrentPage(newPage);
+    };
+
+    const handleSortChange = (columnKey: string) => {
+        if (sortColumn === columnKey) {
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortColumn(columnKey);
+            setSortDirection('asc');
+        }
+    };
+
     return (
         <div>
             <h1>Pipeline Listing</h1>
@@ -108,13 +131,22 @@ function PipelineListing() {
                     </div>
                     <DetailsList
                         items={filteredPipelines}
-                        columns={columns}
+                        columns={columns.map(col => ({
+                            ...col,
+                            onColumnClick: () => handleSortChange(col.key)
+                        }))}
                         setKey="id"
                         layoutMode={DetailsListLayoutMode.justified}
                         selectionMode={SelectionMode.single}
                         selection={selection}
                         onItemInvoked={handleItemClick}
                     />
+                    {/* Pagination controls */}
+                    <div>
+                        <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>Previous</button>
+                        <span>Page {currentPage}</span>
+                        <button onClick={() => handlePageChange(currentPage + 1)}>Next</button>
+                    </div>
                 </PivotItem>
                 <PivotItem headerText="Published pipelines" itemKey="published">
                     <div style={{ marginBottom: 10 }}>
@@ -129,9 +161,7 @@ function PipelineListing() {
                         layoutMode={DetailsListLayoutMode.justified}
                         selectionMode={SelectionMode.single}
                         selection={selection}
-                        onItemInvoked={item => {
-                            selection.setKeySelected(item.id, true, false);
-                        }}
+                        onItemInvoked={handleItemClick}
                     />
                 </PivotItem>
             </Pivot>

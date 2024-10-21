@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { DetailsList, IColumn, PrimaryButton, Stack, Text } from '@fluentui/react';
 import { postJobsList } from '../api/jobsListing';
+import { useNavigate } from 'react-router-dom';
 
 function Triggers() {
   const [jobs, setJobs] = useState([]);
   const [pageSize, setPageSize] = useState(10);
   const [pageNumber, setPageNumber] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     postJobsList(pageSize, pageNumber)
@@ -37,6 +39,11 @@ function Triggers() {
     }
   };
 
+  const handleItemClick = (item: any) => {
+    navigate(`/job-details/${item.id}`);
+};
+
+
   return (
     <div>
       <DetailsList
@@ -47,6 +54,7 @@ function Triggers() {
         selectionPreservedOnEmptyClick={true}
         ariaLabelForSelectionColumn="Toggle selection"
         ariaLabelForSelectAllCheckbox="Toggle selection for all items"
+        onItemInvoked={handleItemClick}
       />
       <Stack horizontal tokens={{ childrenGap: 10 }} verticalAlign="center">
         <PrimaryButton onClick={handlePreviousPage} disabled={pageNumber === 1}>

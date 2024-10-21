@@ -7,6 +7,8 @@ import { SerlizeSchema } from './SerlizeSchema';
 import { updatePipelineGraph } from '../../api/updatePipelineGraph';
 import { startJob } from '../../api/startJob';
 import { useJobId } from '../../context/GraphContext';
+import { validatePipeline } from '../../api/validatePipline';
+import { publishPipeline } from '../../api/publishPipline';
 
 interface PipelineHeaderProps {
   onAddFileReader?: () => void;
@@ -166,12 +168,32 @@ const GraphPipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , 
       onClick: () => handleStartPipeline(),
     },
     {
-      key: 'feedback',
-      text: 'Feedback',
-      iconProps: { iconName: 'Feedback' },
-      onClick: () => console.log('Feedback clicked'),
+      key: 'validate',
+      text: 'Validate',
+      iconProps: { iconName: 'CheckMark' },
+      onClick: () => handleValidatePipeline(),
+    },
+    {
+      key: 'publish',
+      text: 'Publish',
+      iconProps: { iconName: 'CloudUpload' },
+      onClick: () => handlePublishPipeline(),
     },
   ];
+
+  const handlePublishPipeline = useCallback(async () => {
+    if (pipelineId) {
+      const res = await publishPipeline(pipelineId);
+      console.log(res);
+    }
+  }, [pipelineId]);
+
+  const handleValidatePipeline = useCallback(async () => {
+    if (pipelineId) {
+      const res = await validatePipeline(pipelineId);
+      console.log(res);
+    }
+  }, [pipelineId]);
 
   const handleSavePipeline = useCallback(async () => {
    const data = SerlizeSchema(nodes, edges);
