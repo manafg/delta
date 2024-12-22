@@ -27,17 +27,33 @@ export function SerlizeSchema(nodes: Node[], edges: Edge[]) {
         } else if (type === 'aggregate') {
             block.input_ports = { main: 'main' };
             block.output_ports = { main: 'main' };
+        }else if (type === 'join') {
+            block.input_ports = { left: 'left', right: 'right' };
+            block.output_ports = { main: 'main' };
         }
 
         return block;
     });
 
-    const connections = edges.map(edge => ({
-        from: edge.source.replace(/-/g, ''),
-        from_port: 'main',
-        to: edge.target.replace(/-/g, ''),
-        to_port: 'main'
-    }));
+    const connections = edges.map((edge, index) => {
+        const from = edge.source.replace(/-/g, '');
+        const to = edge.target.replace(/-/g, '');
+        
+        // Check if the target node is of type 'join'
+        const targetNode = nodes.find(node => node.id.replace(/-/g, '') === to);
+        let from_port = 'main';
+        if (targetNode && targetNode.type === 'join') {
+            // Assign 'left' to the first connection and 'right' to the second connection
+            from_port = (index === 0) ? 'left' : 'right';
+        }
+
+        return {
+            from,
+            from_port: 'main',
+            to,
+            to_port: from_port
+        };
+    });
 
     return {
         blocks,

@@ -100,13 +100,14 @@ export function AggregatePanel({ nodeId }: AggregatePanelProps) {
 
   const handleSave = () => {
     const result = transformAggregation(aggregateFunctions, connectedNode?.data?.options?.schema?.fields);
+    console.log("resultagg", result);
     updateNodeData(nodeId, result );
     dismissPanel()
   };
 
   const options = useMemo(() => {
     return connectedNode?.data?.options?.schema?.fields?.map((field: any) => ({ key: field.name, text: field.name }));
-  }, [connectedNode?.data?.options?.schema?.fields]);
+  }, [connectedNode]);
 
   const filterByOptions = useMemo(() => {
     return options?.filter((option:any) => option.key !== newAggregateFunction.field);

@@ -1,19 +1,18 @@
 import React from "react";
-import { Handle, Position, useReactFlow } from "@xyflow/react";
-import { Text, Stack, Icon, Separator, ContextualMenu, IContextualMenuProps  } from "@fluentui/react";
+import { Handle, Position } from "@xyflow/react";
+import { Text, Stack, Separator, ContextualMenu, IContextualMenuProps  } from "@fluentui/react";
 import { Card } from "@fluentui/react-cards";
 import { FontIcon } from "@fluentui/react/lib/Icon";
 import { NodeProps } from "@xyflow/react";
 import { usePanel } from "../Panels/PanelProvider";
-import { AggregatePanel } from "../Panels/AggregatePanel/AggregatePanel";
 import { useState } from "react";
 import { useDrawer } from '../DrawerContext';
-
-interface AggregateProps extends NodeProps {
+import { JoinPanel } from "../Panels/JoinPanel/JoinPanel";
+interface JoinProps extends NodeProps {
   onClick?: () => void;
 }
 
-const Aggregate: React.FC<AggregateProps> = (props:any) => {
+const Join: React.FC<JoinProps> = (props:any) => {
   const { openPanel } = usePanel();
   
   const { openDrawer } = useDrawer();
@@ -38,7 +37,7 @@ const Aggregate: React.FC<AggregateProps> = (props:any) => {
   };
 
   const handleEditButtonClick = () => {
-    openPanel('aggregate', <AggregatePanel nodeId={props.id} />, 'aggregate', 'Aggregate')
+    openPanel('join', <JoinPanel nodeId={props.id} />, 'join', 'Join')
     handleMenuClose();
   };
 
@@ -54,7 +53,6 @@ const Aggregate: React.FC<AggregateProps> = (props:any) => {
         text: 'Edit',
         onClick: handleEditButtonClick,
       },
-      // Add more menu items here if needed
     ],
     target: { x: menuPosition.x, y: menuPosition.y },
     onDismiss: handleMenuClose,
@@ -66,7 +64,7 @@ const Aggregate: React.FC<AggregateProps> = (props:any) => {
   return (
     <>
     <Card
-      className="aggregate-node"
+      className="join-node"
       tokens={{ childrenGap: 10, padding: 10 }}
       styles={{
         root: {
@@ -79,19 +77,21 @@ const Aggregate: React.FC<AggregateProps> = (props:any) => {
       onContextMenu={handleRightClick}
       onClick={() =>
         openPanel(
-          "aggregate",
-          <AggregatePanel nodeId={props.id} />,
-          "aggregate",
-          "Aggregate"
+          "join",
+          <JoinPanel nodeId={props.id} />,
+          "join",
+          "Join"
         )
       }
     >
-      <Handle type="target" position={Position.Left} />
-      <Handle type="source" position={Position.Right} />
+      <Handle type="target" id="target-1" position={Position.Left} />
+      <Handle type="target" id="target-2" position={Position.Left} />
+
+      <Handle type="source" id="source-1" position={Position.Right} />
 
       <Stack horizontal tokens={{ childrenGap: 10 }} verticalAlign="center">
         <FontIcon iconName="Merge" style={{ fontSize: 24, color: "#0078d4" }} />
-        <Text variant="large">Aggregate</Text>
+        <Text variant="large">Join</Text>
       </Stack>
 
       <Separator styles={{ root: { padding: "5px 0" } }} />
@@ -101,8 +101,8 @@ const Aggregate: React.FC<AggregateProps> = (props:any) => {
         tokens={{ childrenGap: 10 }}
         horizontalAlign="space-between"
       >
-        <Text>Group By</Text>
-        <Text>Sum</Text>
+        <Text>Join</Text>
+        <Text>Join</Text>
       </Stack>
     </Card>
     {menuVisible && <ContextualMenu {...menuProps} />}
@@ -110,4 +110,4 @@ const Aggregate: React.FC<AggregateProps> = (props:any) => {
   );
 };
 
-export default Aggregate;
+export default Join;

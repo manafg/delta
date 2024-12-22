@@ -11,8 +11,10 @@ import { useCallback, useState } from "react";
 import { ActionButton } from "@fluentui/react";
 import GraphPipelineHeader from "../components/pipline/GraphPiplineHeader";
 import FileReader from "../components/DrawComponents/FileReader";
+import Join from "../components/DrawComponents/Join";
 import Aggregate from "../components/DrawComponents/Aggregate";
 import FileWriter from "../components/DrawComponents/FileWriter";
+import GroupBy from "../components/DrawComponents/GroupBy";
 import { FloatingButton } from "../Styles";
 import { Edge, Node } from "@xyflow/react";
 import { DnDProvider, useDnD } from "../context/Cnavas";
@@ -33,7 +35,9 @@ const initialEdges: Edge[] = [];
 const nodeTypes = {
   file_reader: FileReader,
   aggregate: Aggregate,
+  join: Join,
   file_writer: FileWriter,
+  groupby: GroupBy,
 };
 
 const getId = () => uuidv4().replace(/-/g, "");
@@ -47,6 +51,12 @@ const adjustedType = (type: string) => {
   }
   if (type === "fileWriter") {
     return "file_writer";
+  }
+  if (type === "join") {
+    return "join";
+  }
+  if (type === "groupby") {
+    return "groupby";
   }
 };
 

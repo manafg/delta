@@ -5,15 +5,15 @@ import { Card } from "@fluentui/react-cards";
 import { FontIcon } from "@fluentui/react/lib/Icon";
 import { NodeProps } from "@xyflow/react";
 import { usePanel } from "../Panels/PanelProvider";
-import { AggregatePanel } from "../Panels/AggregatePanel/AggregatePanel";
+import { GroupByPanel } from "../Panels/GroupByPanel/GroupByPanel";
 import { useState } from "react";
 import { useDrawer } from '../DrawerContext';
 
-interface AggregateProps extends NodeProps {
+interface GroupByProps extends NodeProps {
   onClick?: () => void;
 }
 
-const Aggregate: React.FC<AggregateProps> = (props:any) => {
+const GroupBy: React.FC<GroupByProps> = (props:any) => {
   const { openPanel } = usePanel();
   
   const { openDrawer } = useDrawer();
@@ -38,7 +38,7 @@ const Aggregate: React.FC<AggregateProps> = (props:any) => {
   };
 
   const handleEditButtonClick = () => {
-    openPanel('aggregate', <AggregatePanel nodeId={props.id} />, 'aggregate', 'Aggregate')
+    openPanel('groupby', <GroupByPanel nodeId={props.id} />, 'groupby', 'Group By')
     handleMenuClose();
   };
 
@@ -79,10 +79,10 @@ const Aggregate: React.FC<AggregateProps> = (props:any) => {
       onContextMenu={handleRightClick}
       onClick={() =>
         openPanel(
-          "aggregate",
-          <AggregatePanel nodeId={props.id} />,
-          "aggregate",
-          "Aggregate"
+          "groupby",
+          <GroupByPanel nodeId={props.id} />,
+          "groupby",
+          "Group By"
         )
       }
     >
@@ -91,7 +91,7 @@ const Aggregate: React.FC<AggregateProps> = (props:any) => {
 
       <Stack horizontal tokens={{ childrenGap: 10 }} verticalAlign="center">
         <FontIcon iconName="Merge" style={{ fontSize: 24, color: "#0078d4" }} />
-        <Text variant="large">Aggregate</Text>
+        <Text variant="large">Group By</Text>
       </Stack>
 
       <Separator styles={{ root: { padding: "5px 0" } }} />
@@ -110,4 +110,4 @@ const Aggregate: React.FC<AggregateProps> = (props:any) => {
   );
 };
 
-export default Aggregate;
+export default GroupBy;

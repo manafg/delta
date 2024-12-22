@@ -9,16 +9,19 @@ import { Node, Edge } from "@xyflow/react";
 import { CommandBar, ICommandBarItemProps, Stack, Text } from "@fluentui/react";
 import FileReader from "../components/DrawComponents/FileReader";
 import Aggregate from "../components/DrawComponents/Aggregate";
+import Join from "../components/DrawComponents/Join";
 import FileWriter from "../components/DrawComponents/FileWriter";
+import GroupBy from "../components/DrawComponents/GroupBy";
 import { PanelProvider } from "../components/Panels/PanelProvider";
 import { DrawerProvider } from "../components/DrawerContext";
 import { useAlert } from '../context/AlertContext';
 import { MessageBarType } from '@fluentui/react';
-
 const nodeTypes = {
   file_reader: FileReader,
   aggregate: Aggregate,
   file_writer: FileWriter,
+  join: Join,
+  groupby: GroupBy,
 };
 
 function JobDetails() {
@@ -31,7 +34,6 @@ function JobDetails() {
   useEffect(() => {
     async function fetchData() {
       const res = await getJobInfo(id as string);
-      debugger;
       if (res.graph) {
         const { nodes, edges } = DeserializeSchema(JSON.parse(res.graph));
         setNodes(nodes);

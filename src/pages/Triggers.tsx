@@ -11,7 +11,7 @@ function Triggers() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    postJobsList(pageSize, pageNumber)
+    postJobsList(100, 0)
       .then(response => {
         setJobs(response.items);
         setTotalCount(response.totalCount);

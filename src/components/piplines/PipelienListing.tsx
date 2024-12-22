@@ -79,7 +79,6 @@ function PipelineListing() {
     }, [error]);
 
     const onLinkClick = (item?: PivotItem) => {
-        debugger;
         setSelectedKey(item?.props.itemKey || 'drafts');
     };
 

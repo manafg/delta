@@ -13,16 +13,18 @@ import { useAlert } from '../../context/AlertContext';
 import { MessageBarType } from '@fluentui/react';
 import { getPipeline } from '../../api/getPipline';
 import { TextField, IconButton } from '@fluentui/react';
-
+import { updatePipelineName } from '../../api/updatPiplineName';
 interface PipelineHeaderProps {
   onAddFileReader?: () => void;
   onAddFileWriter?: () => void;
   onAddAggregate?: () => void;
+  onAddJoin?: () => void;
+  onAddGroupBy?: () => void;
   pipelineId?: string;
   onUpdatePipelineName?: (newName: string) => void;
 }
 
-const GraphPipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , onAddFileWriter, onAddAggregate, pipelineId, onUpdatePipelineName }) => {
+const GraphPipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , onAddFileWriter, onAddAggregate,onAddGroupBy, onAddJoin, pipelineId, onUpdatePipelineName }) => {
   const { setGraph , graph , setJobId } = useJobId();
   const [graphData , setGraphData] = useState<string | null>(null);
   const [_, setType] = useDnD();
@@ -59,7 +61,9 @@ const GraphPipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , 
   const handleConfirm = () => {
     setIsEditing(false);
     setPipelineName(newPipelineName);
-    //onUpdatePipelineName(newPipelineName);
+    if (pipelineId) {
+      updatePipelineName(pipelineId, newPipelineName);
+    }
   };
 
   const onDragStart = (event: React.DragEvent<HTMLDivElement>, nodeType: string ) => {
@@ -176,13 +180,27 @@ const GraphPipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , 
             ),
           },
           {
-            key: 'operation2',
-            text: 'Operation 2',
-            onClick: () => console.log('Operation 2 clicked'),
+            key: 'groupby',
+            text: 'Group By',
+            onClick: onAddGroupBy,
             onRender: (item: ICommandBarItemProps) => (
               <div
                 draggable
-                onDragStart={(e) => onDragStart(e, 'operation2')}
+                onDragStart={(e) => onDragStart(e, 'groupby')}
+                style={{ cursor: 'move', padding: '8px' }}
+              >
+                {item.text}
+              </div>
+            ),
+          },
+          {
+            key: 'join',
+            text: 'Join',
+            onClick: onAddJoin,
+            onRender: (item: ICommandBarItemProps) => (
+              <div
+                draggable
+                onDragStart={(e) => onDragStart(e, 'join')}
                 style={{ cursor: 'move', padding: '8px' }}
               >
                 {item.text}
