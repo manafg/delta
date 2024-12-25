@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState , useEffect} from 'react';
 import { TextField, PrimaryButton, Checkbox, Link, Stack, Text, Spinner, MessageBar, MessageBarType } from '@fluentui/react';
 import { initializeIcons } from '@fluentui/font-icons-mdl2';
 import { useNavigate } from 'react-router-dom';
@@ -31,14 +31,17 @@ function Login() {
     return true;
   };
 
+  useEffect(() => {
+    if (isSuccess) {
+      navigate('/');
+    }
+  }, [isSuccess, navigate]);
+
   const handleLogin = async () => {
     if (!validateInputs()) return;
 
     try {
       await login(username, password);
-      if (isSuccess) {
-          navigate('/');
-      }
     } catch (err) {
       setError('Login failed. Please check your credentials and try again.');
     }

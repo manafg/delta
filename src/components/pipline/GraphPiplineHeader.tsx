@@ -105,20 +105,6 @@ const GraphPipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , 
               </div>
             ),
           },
-          {
-            key: 'input2',
-            text: 'Input 2',
-            onClick: () => console.log('Input 2 clicked'),
-            onRender: (item: ICommandBarItemProps) => (
-              <div
-                draggable
-                onDragStart={(e) => onDragStart(e, 'input2')}
-                style={{ cursor: 'move', padding: '8px' }}
-              >
-                {item.text}
-              </div>
-            ),
-          },
         ],
       },
     },
@@ -136,20 +122,6 @@ const GraphPipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , 
               <div
                 draggable
                 onDragStart={(e) => onDragStart(e, 'fileWriter')}
-                style={{ cursor: 'move', padding: '8px' }}
-              >
-                {item.text}
-              </div>
-            ),
-          },
-          {
-            key: 'output2',
-            text: 'Output 2',
-            onClick: () => console.log('Output 2 clicked'),
-            onRender: (item: ICommandBarItemProps) => (
-              <div
-                draggable
-                onDragStart={(e) => onDragStart(e, 'output2')}
                 style={{ cursor: 'move', padding: '8px' }}
               >
                 {item.text}
