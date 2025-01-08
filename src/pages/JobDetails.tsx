@@ -97,23 +97,25 @@ function JobDetails() {
 
   return (
     <DrawerProvider>
-      <PanelProvider>
-        <Stack horizontalAlign="start" padding={10}>
-          <Text variant="xLarge">{jobName}</Text>
-          <CommandBar items={commandBarItems} />
-        </Stack>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          nodeTypes={nodeTypes}
-          edgesFocusable={false}
-          nodesDraggable={false}
-          nodesConnectable={false}
-          nodesFocusable={false}
-          draggable={false}
-          elementsSelectable={false}
-        />
-      </PanelProvider>
+      <div id="job-details-panel-container" style={{ position: 'relative', height: '100%' }}>
+        <PanelProvider containerId="job-details-panel-container">
+          <Stack horizontalAlign="start" padding={10}>
+            <Text variant="xLarge">{jobName}</Text>
+            <CommandBar items={commandBarItems} />
+          </Stack>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={nodeTypes}
+            edgesFocusable={false}
+            nodesDraggable={false}
+            nodesConnectable={false}
+            nodesFocusable={false}
+            draggable={false}
+            elementsSelectable={false}
+          />
+        </PanelProvider>
+      </div>
     </DrawerProvider>
   );
 }

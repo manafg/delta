@@ -90,7 +90,10 @@ const Aggregate: React.FC<AggregateProps> = (props:any) => {
       <Handle type="source" position={Position.Right} />
 
       <Stack horizontal tokens={{ childrenGap: 10 }} verticalAlign="center">
-        <FontIcon iconName="Merge" style={{ fontSize: 24, color: "#0078d4" }} />
+      <svg height="24" width="24" focusable="false" viewBox="0,0,2048,2048" style={{color: "#0078d4"}}>
+          <path key="0" className="OfficeIconColors_HighContrast" d="M 1664 384 v -128 h -1189 l 768 768 l -768 768 h 1189 v -128 h 128 v 256 h -1536 v -91 l 805 -805 l -805 -805 v -91 h 1536 v 256 z"></path>
+          <path key="1" className="OfficeIconColors_m22" d="M 1664 384 v -128 h -1189 l 768 768 l -768 768 h 1189 v -128 h 128 v 256 h -1536 v -91 l 805 -805 l -805 -805 v -91 h 1536 v 256 z"></path>
+        </svg>
         <Text variant="large">Aggregate</Text>
       </Stack>
 

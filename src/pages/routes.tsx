@@ -14,6 +14,7 @@ import Pipelines from "./Pipelines";
 import CreatePipeline from "./CreatePipeline";
 import JobDetails from "./JobDetails";
 import { AlertProvider } from "../context/AlertContext";
+import Connectors from "./Connectors";
 
 function PrivateRoute({ element, ...rest }: { element: ReactElement }) {
   const token = localStorage.getItem("token");
@@ -27,6 +28,7 @@ function RoutesComponent() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<PrivateRoute element={<Layout />} />}>
+            <Route path="connectors" element={<Connectors />} />
             <Route path="home" element={<Home />} />
             <Route path="triggers" element={<Triggers />} />
             <Route path="alert" element={<Alert />} />

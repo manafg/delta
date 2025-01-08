@@ -1,4 +1,4 @@
-import React, { ReactNode, useState, useContext, createContext } from 'react';
+import React, { ReactNode, useState, useContext, createContext, useEffect } from 'react';
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import ReactDOM from 'react-dom';
 
@@ -19,7 +19,13 @@ interface PanelContextType {
 
 const PanelContext = createContext<PanelContextType | undefined>(undefined);
 
-export const PanelProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+interface PanelProviderProps {
+  children: ReactNode;
+  container?: HTMLElement;
+  containerId?: string;
+}
+
+export const PanelProvider: React.FC<PanelProviderProps> = ({ children, container, containerId }) => {
   const [panelState, setPanelState] = useState<PanelState>({
     isOpen: false,
     type: 'custom',
@@ -27,6 +33,15 @@ export const PanelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     id: '',
     header: '',
   });
+
+  const [containerElement, setContainerElement] = useState<HTMLElement | null>(container || null);
+
+  useEffect(() => {
+    if (containerId && !container) {
+      const element = document.getElementById(containerId);
+      setContainerElement(element);
+    }
+  }, [containerId, container]);
 
   const openPanel = (type: PanelContentType, content: ReactNode, id: string, header: string) => {
     setPanelState({ isOpen: true, type, content, id, header });
@@ -45,10 +60,20 @@ export const PanelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
           isOpen={panelState.isOpen}
           onDismiss={dismissPanel}
           type={PanelType.medium}
+          styles={{
+            main: {
+              height: 'auto',
+              maxHeight: '80vh'  // This limits the panel height to 80% of viewport height
+            },
+            scrollableContent: {
+              height: 'auto',
+              maxHeight: 'calc(80vh - 44px)'  // 44px accounts for the header height
+            }
+          }}
         >
           {panelState.content}
         </Panel>,
-        document.body
+        containerElement || document.body
       )}
     </PanelContext.Provider>
   );

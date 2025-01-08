@@ -3,7 +3,7 @@ import { DefaultButton, PrimaryButton, TextField, Dropdown, IDropdownOption, Sta
 import { useReactFlow } from '@xyflow/react';
 import { transformAggregation, reverseTransformAggregation } from './serlizer';
 import { usePanel } from '../PanelProvider';
-import { useJobId } from '../../../context/GraphContext';
+
 interface AggregatePanelProps {
   nodeId: string;
 }
@@ -41,18 +41,17 @@ export function AggregatePanel({ nodeId }: AggregatePanelProps) {
     timeUnit: 'second',
   });
 
-  const { getEdges, getNode } = useReactFlow();
+  const { getEdges, getNode, updateNodeData } = useReactFlow();
   const [connectedNode, setConnectedNode] = useState<any>(null);
-  const { updateNodeData } = useReactFlow();
   const { dismissPanel } = usePanel();
   
   useEffect(()=>{
     const node = getNode(nodeId);
-    if (node?.data && Object.keys(node.data).length > 0) {
-    const { input } = reverseTransformAggregation(node?.data);
-    setAggregateFunctions(input);
+    if (node?.data && Object.keys(node.data).length > 0 && reverseTransformAggregation) {
+      const { input } = reverseTransformAggregation(node.data);
+      setAggregateFunctions(input);
     }
-  },[getNode, nodeId])
+  }, [getNode, nodeId])
 
   useEffect(() => {
     const edges = getEdges();
@@ -99,10 +98,16 @@ export function AggregatePanel({ nodeId }: AggregatePanelProps) {
   };
 
   const handleSave = () => {
-    const result = transformAggregation(aggregateFunctions, connectedNode?.data?.options?.schema?.fields);
-    console.log("resultagg", result);
-    updateNodeData(nodeId, result );
-    dismissPanel()
+    try {
+      const result = transformAggregation(aggregateFunctions, connectedNode?.data?.options?.schema?.fields);
+      if (result) {
+        updateNodeData(nodeId, result);
+        dismissPanel();
+      }
+    } catch (error) {
+      console.error('Error transforming aggregation:', error);
+      // You might want to show an error message to the user here
+    }
   };
 
   const options = useMemo(() => {

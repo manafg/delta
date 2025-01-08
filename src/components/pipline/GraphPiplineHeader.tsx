@@ -59,10 +59,12 @@ const GraphPipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , 
   };
 
   const handleConfirm = () => {
-    setIsEditing(false);
-    setPipelineName(newPipelineName);
-    if (pipelineId) {
-      updatePipelineName(pipelineId, newPipelineName);
+    if (newPipelineName.length > 0) {
+      setIsEditing(false);
+      setPipelineName(newPipelineName);
+      if (pipelineId) {
+        updatePipelineName(pipelineId, newPipelineName);
+      }
     }
   };
 
@@ -258,10 +260,10 @@ const GraphPipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , 
    }, [graph , pipelineId, showMessage , setJobId]);
 
   return (
-    <div >
+    <div style={{ backgroundColor: '#fff', boxShadow: 'rgba(0, 0, 0, 0.133) 0px 3.6px 3.6px -2px, rgba(0, 0, 0, 0.11) 0px 0.3px 0.9px -0.6px' }}>
       {isEditing ? (
         <TextField
-          style={{ width: '30%'}}
+          styles={{ root: { width: '30%', padding: '10px 0px 0px 30px' } }}
           value={newPipelineName}
           onChange={handleInputChange}
           onBlur={handleConfirm}
@@ -270,8 +272,9 @@ const GraphPipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , 
         />
       ) : (
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <h3 style={{ margin: 0 }}>{pipelineName}</h3>
+          <h3 style={{ margin: 0, padding: '10px 0px 0px 30px' }}>{pipelineName}</h3>
           <IconButton
+            style={{ margin: 0, padding: '10px 0px 0px 8px' }}
             iconProps={{ iconName: 'Edit' }}
             onClick={handleEditClick}
             ariaLabel="Edit pipeline name"

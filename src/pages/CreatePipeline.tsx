@@ -5,6 +5,8 @@ import {
   useEdgesState,
   addEdge,
   useReactFlow,
+  Background,
+  BackgroundVariant
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useCallback, useState } from "react";
@@ -60,7 +62,7 @@ const adjustedType = (type: string) => {
   }
 };
 
-const CreatePipeline = () => {
+const CreatePipeline: React.FC = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -122,40 +124,46 @@ const CreatePipeline = () => {
   };
 
   return (
-    <>
-      <GraphPipelineHeader pipelineId={id} />
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        nodeTypes={nodeTypes}
-        onConnect={onConnect}
-        onDrop={onDrop}
-        onDragOver={onDragOver}
-      />
-      <ActionButton
-        iconProps={{ iconName: "ChevronUp" }}
-        onClick={toggleDrawer}
-        styles={FloatingButton}
-      />
-      <DrawerPanel />
-    </>
+    <div className="create-pipeline-container" style={{ position: 'relative', height: '100%' }}>
+      <div id="pipeline-panel-container" style={{ position: 'relative', height: '100%' }}>
+        <PanelProvider containerId="pipeline-panel-container">
+          <GraphPipelineHeader pipelineId={id} />
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            nodeTypes={nodeTypes}
+            onConnect={onConnect}
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+          />
+          <Background color="#F9F9F9" variant={BackgroundVariant.Cross} />
+
+          <ActionButton
+            iconProps={{ iconName: "ChevronUp" }}
+            onClick={toggleDrawer}
+            styles={FloatingButton}
+          />
+          <DrawerPanel />
+        </PanelProvider>
+      </div>
+    </div>
   );
 };
 
-export default () => {
+const PipelineWrapper = () => {
   return (
     <ReactFlowProvider>
       <JobIdProvider>
         <DnDProvider>
           <DrawerProvider>
-            <PanelProvider>
-              <CreatePipeline />
-            </PanelProvider>
+            <CreatePipeline />
           </DrawerProvider>
         </DnDProvider>
       </JobIdProvider>
     </ReactFlowProvider>
   );
 };
+
+export default PipelineWrapper;
