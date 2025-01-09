@@ -98,7 +98,7 @@ function JobDetails() {
   return (
     <DrawerProvider>
       <div id="job-details-panel-container" style={{ position: 'relative', height: '100%' }}>
-        <PanelProvider containerId="job-details-panel-container">
+        <PanelProvider portalElementId="job-details-panel-container">
           <Stack horizontalAlign="start" padding={10}>
             <Text variant="xLarge">{jobName}</Text>
             <CommandBar items={commandBarItems} />

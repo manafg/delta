@@ -21,11 +21,10 @@ const PanelContext = createContext<PanelContextType | undefined>(undefined);
 
 interface PanelProviderProps {
   children: ReactNode;
-  container?: HTMLElement;
-  containerId?: string;
+  portalElementId?: string; // Add new prop for portal element ID
 }
 
-export const PanelProvider: React.FC<PanelProviderProps> = ({ children, container, containerId }) => {
+export const PanelProvider: React.FC<PanelProviderProps> = ({ children, portalElementId = 'portal-root' }) => {
   const [panelState, setPanelState] = useState<PanelState>({
     isOpen: false,
     type: 'custom',
@@ -33,15 +32,6 @@ export const PanelProvider: React.FC<PanelProviderProps> = ({ children, containe
     id: '',
     header: '',
   });
-
-  const [containerElement, setContainerElement] = useState<HTMLElement | null>(container || null);
-
-  useEffect(() => {
-    if (containerId && !container) {
-      const element = document.getElementById(containerId);
-      setContainerElement(element);
-    }
-  }, [containerId, container]);
 
   const openPanel = (type: PanelContentType, content: ReactNode, id: string, header: string) => {
     setPanelState({ isOpen: true, type, content, id, header });
@@ -53,28 +43,21 @@ export const PanelProvider: React.FC<PanelProviderProps> = ({ children, containe
 
   return (
     <PanelContext.Provider value={{ openPanel, dismissPanel }}>
-      {children}
-      {ReactDOM.createPortal(
+      <div style={{ position: 'relative', height: '100%' }}>
+        {children}
         <Panel
           headerText={panelState.header}
           isOpen={panelState.isOpen}
           onDismiss={dismissPanel}
           type={PanelType.medium}
-          styles={{
-            main: {
-              height: 'auto',
-              maxHeight: '80vh'  // This limits the panel height to 80% of viewport height
-            },
-            scrollableContent: {
-              height: 'auto',
-              maxHeight: 'calc(80vh - 44px)'  // 44px accounts for the header height
-            }
+          isLightDismiss
+          layerProps={{
+            hostId: portalElementId // This will constrain the panel to the container
           }}
         >
           {panelState.content}
-        </Panel>,
-        containerElement || document.body
-      )}
+        </Panel>
+      </div>
     </PanelContext.Provider>
   );
 };

@@ -126,7 +126,7 @@ const CreatePipeline: React.FC = () => {
   return (
     <div className="create-pipeline-container" style={{ position: 'relative', height: '100%' }}>
       <div id="pipeline-panel-container" style={{ position: 'relative', height: '100%' }}>
-        <PanelProvider containerId="pipeline-panel-container">
+        <PanelProvider portalElementId="pipeline-panel-container">
           <GraphPipelineHeader pipelineId={id} />
           <ReactFlow
             nodes={nodes}
