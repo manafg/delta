@@ -16,7 +16,6 @@ const cardStyles = (valid: boolean) => ({
   root: {
     border: '1px solid',
     borderColor: valid ? '#0078d4' : 'red',
-    borderRadius: '4px',
     width: '250px',
     cursor: 'pointer',
   }

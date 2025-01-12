@@ -71,7 +71,6 @@ const GroupBy: React.FC<GroupByProps> = (props:any) => {
       styles={{
         root: {
           border: "1px solid #0078d4",
-          borderRadius: "4px",
           width: "250px",
           cursor: "pointer",
         },
