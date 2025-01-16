@@ -15,6 +15,9 @@ import CreatePipeline from "./CreatePipeline";
 import JobDetails from "./JobDetails";
 import { AlertProvider } from "../context/AlertContext";
 import Connectors from "./Connectors";
+import keycloak from "../keycloak";
+import { ReactKeycloakProvider } from '@react-keycloak/web'
+
 
 function PrivateRoute({ element, ...rest }: { element: ReactElement }) {
   const token = localStorage.getItem("token");
@@ -23,9 +26,10 @@ function PrivateRoute({ element, ...rest }: { element: ReactElement }) {
 
 function RoutesComponent() {
   return (
-    <AlertProvider>
-      <Router>
-        <Routes>
+    <ReactKeycloakProvider authClient={keycloak}>
+      <AlertProvider>
+        <Router>
+          <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<PrivateRoute element={<Layout />} />}>
             <Route path="connectors" element={<Connectors />} />
@@ -36,9 +40,10 @@ function RoutesComponent() {
             <Route path="/create-pipeline/:id" element={<CreatePipeline />} />
             <Route path="/job-details/:id" element={<JobDetails />} />
           </Route>
-        </Routes>
-      </Router>
-    </AlertProvider>
+          </Routes>
+        </Router>
+      </AlertProvider>
+    </ReactKeycloakProvider>
   );
 }
 

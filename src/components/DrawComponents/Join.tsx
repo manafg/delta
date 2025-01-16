@@ -8,9 +8,40 @@ import { useState } from "react";
 import { useDrawer } from '../DrawerContext';
 import { JoinPanel } from "../Panels/JoinPanel/JoinPanel";
 import JoinIcon from "../../assets/Join";
+import { handleBaseStyles, cardStyles } from './commonStyles';
+
+const joinHandleStyles = {
+  ...handleBaseStyles,
+  left: {
+    ...handleBaseStyles,
+    '&::before': {
+      content: '"L"',
+      position: 'absolute',
+      left: '-20px',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      fontSize: '12px',
+      color: '#666',
+    }
+  },
+  right: {
+    ...handleBaseStyles,
+    '&::before': {
+      content: '"R"',
+      position: 'absolute',
+      left: '-20px',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      fontSize: '12px',
+      color: '#666',
+    }
+  }
+};
+
 interface JoinProps extends NodeProps {
   onClick?: () => void;
 }
+
 
 const Join: React.FC<JoinProps> = (props:any) => {
   const { openPanel } = usePanel();
@@ -66,13 +97,7 @@ const Join: React.FC<JoinProps> = (props:any) => {
     <Card
       className="join-node"
       tokens={{ childrenGap: 10, padding: 10 }}
-      styles={{
-        root: {
-          border: "1px solid #0078d4",
-          width: "250px",
-          cursor: "pointer",
-        },
-      }}
+      styles={cardStyles(true)}
       onContextMenu={handleRightClick}
       onClick={() =>
         openPanel(
@@ -83,10 +108,22 @@ const Join: React.FC<JoinProps> = (props:any) => {
         )
       }
     >
-      <Handle type="target" id="target-1" position={Position.Left} />
-      <Handle type="target" id="target-2" position={Position.Left} />
+      <Handle 
+        style={joinHandleStyles.right} 
+        type="target" 
+        id="target-1" 
+        position={Position.Left} 
+        className="right-handle"
+      />
+      <Handle 
+        style={{...joinHandleStyles.left, top: '70%'}} 
+        type="target" 
+        id="target-2" 
+        position={Position.Left} 
+        className="left-handle"
+      />
 
-      <Handle type="source" id="source-1" position={Position.Right} />
+      <Handle type="source" id="source-1" position={Position.Right} style={handleBaseStyles} />
 
       <Stack horizontal tokens={{ childrenGap: 10 }} verticalAlign="center">
         <JoinIcon />
