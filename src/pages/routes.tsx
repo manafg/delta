@@ -15,8 +15,6 @@ import CreatePipeline from "./CreatePipeline";
 import JobDetails from "./JobDetails";
 import { AlertProvider } from "../context/AlertContext";
 import Connectors from "./Connectors";
-import keycloak from "../keycloak";
-import { ReactKeycloakProvider } from '@react-keycloak/web'
 
 
 function PrivateRoute({ element, ...rest }: { element: ReactElement }) {
@@ -26,7 +24,6 @@ function PrivateRoute({ element, ...rest }: { element: ReactElement }) {
 
 function RoutesComponent() {
   return (
-    <ReactKeycloakProvider authClient={keycloak}>
       <AlertProvider>
         <Router>
           <Routes>
@@ -43,7 +40,6 @@ function RoutesComponent() {
           </Routes>
         </Router>
       </AlertProvider>
-    </ReactKeycloakProvider>
   );
 }
 
