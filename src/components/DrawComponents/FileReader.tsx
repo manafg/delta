@@ -8,19 +8,13 @@ import FileReaderPanel from '../Panels/FileReaderPanel/FileReaderPanel';
 import { useNodesData  } from '@xyflow/react';
 import { useDrawer } from '../DrawerContext';
 import { useJobId } from '../../context/GraphContext';
+import { handleBaseStyles, cardStyles } from './commonStyles';
+
 interface FileReaderProps extends NodeProps {
   nodeId?: string;
 }
 
-const cardStyles = (valid: boolean) => ({
-  root: {
-    border: '1px solid',
-    borderColor: valid ? '#0078d4' : 'red',
-    borderRadius: '4px',
-    width: '250px',
-    cursor: 'pointer',
-  }
-});
+
 
 const fileArrowUpStyles = {
   fontSize: 24,
@@ -35,6 +29,7 @@ const textStyles = {
   fontSize: '14px',
   fontWeight: '500',
 };
+
 
 const FileReader: React.FC<FileReaderProps> = ({ id }) => {
   const nodeData: any = useNodesData(id?.toString() ?? '');
@@ -94,7 +89,11 @@ const FileReader: React.FC<FileReaderProps> = ({ id }) => {
         onClick={() => openPanel('filereader', <FileReaderPanel nodeId={id?.toString() ?? ''} />, 'filereader', 'File Reader')}
         onContextMenu={handleRightClick}
       >
-        <Handle type="source" position={Position.Right} />
+        <Handle 
+          type="source" 
+          position={Position.Right} 
+          style={handleBaseStyles}
+        />
 
         <Stack horizontal tokens={{ childrenGap: 10 }} verticalAlign="center">
           <FileArrowUp weight="fill" style={fileArrowUpStyles} />

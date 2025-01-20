@@ -3,7 +3,7 @@ import { refreshToken } from './refreshToken'; // Import the refresh token funct
 
 // Create an Axios instance
 const api = axios.create({
-  baseURL: 'http://api.kafryuba.com/api/', // Replace with your API base URL
+  baseURL: 'https://api.realyze.cloud/api/', // Replace with your API base URL
 });
 
 // Add a request interceptor

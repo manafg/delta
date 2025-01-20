@@ -1,4 +1,4 @@
-import React, { ReactNode, useState, useContext, createContext } from 'react';
+import React, { ReactNode, useState, useContext, createContext, useEffect } from 'react';
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import ReactDOM from 'react-dom';
 
@@ -19,7 +19,12 @@ interface PanelContextType {
 
 const PanelContext = createContext<PanelContextType | undefined>(undefined);
 
-export const PanelProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+interface PanelProviderProps {
+  children: ReactNode;
+  portalElementId?: string; // Add new prop for portal element ID
+}
+
+export const PanelProvider: React.FC<PanelProviderProps> = ({ children, portalElementId = 'portal-root' }) => {
   const [panelState, setPanelState] = useState<PanelState>({
     isOpen: false,
     type: 'custom',
@@ -38,18 +43,21 @@ export const PanelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   return (
     <PanelContext.Provider value={{ openPanel, dismissPanel }}>
-      {children}
-      {ReactDOM.createPortal(
+      <div style={{ position: 'relative', height: '100%' }}>
+        {children}
         <Panel
           headerText={panelState.header}
           isOpen={panelState.isOpen}
           onDismiss={dismissPanel}
           type={PanelType.medium}
+          isLightDismiss
+          layerProps={{
+            hostId: portalElementId // This will constrain the panel to the container
+          }}
         >
           {panelState.content}
-        </Panel>,
-        document.body
-      )}
+        </Panel>
+      </div>
     </PanelContext.Provider>
   );
 };

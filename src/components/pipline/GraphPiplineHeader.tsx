@@ -59,10 +59,12 @@ const GraphPipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , 
   };
 
   const handleConfirm = () => {
-    setIsEditing(false);
-    setPipelineName(newPipelineName);
-    if (pipelineId) {
-      updatePipelineName(pipelineId, newPipelineName);
+    if (newPipelineName.length > 0) {
+      setIsEditing(false);
+      setPipelineName(newPipelineName);
+      if (pipelineId) {
+        updatePipelineName(pipelineId, newPipelineName);
+      }
     }
   };
 
@@ -84,131 +86,6 @@ const GraphPipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , 
       text: 'Redo',
       iconProps: { iconName: 'Redo' },
       onClick: () => console.log('Redo clicked'),
-    },
-    {
-      key: 'inputs',
-      text: 'Inputs',
-      iconProps: { iconName: 'Add' },
-      subMenuProps: {
-        items: [
-          {
-            key: 'fileReader',
-            text: 'File Reader',
-            onClick: onAddFileReader,
-            onRender: (item: ICommandBarItemProps) => (
-              <div
-                draggable
-                onDragStart={(e) => onDragStart(e, 'fileReader')}
-                style={{ cursor: 'move', padding: '8px' }}
-              >
-                {item.text}
-              </div>
-            ),
-          },
-          {
-            key: 'input2',
-            text: 'Input 2',
-            onClick: () => console.log('Input 2 clicked'),
-            onRender: (item: ICommandBarItemProps) => (
-              <div
-                draggable
-                onDragStart={(e) => onDragStart(e, 'input2')}
-                style={{ cursor: 'move', padding: '8px' }}
-              >
-                {item.text}
-              </div>
-            ),
-          },
-        ],
-      },
-    },
-    {
-      key: 'outputs',
-      text: 'Outputs',
-      iconProps: { iconName: 'Add' },
-      subMenuProps: {
-        items: [
-          {
-            key: 'fileWriter',
-            text: 'File Writer',
-            onClick: onAddFileWriter,
-            onRender: (item: ICommandBarItemProps) => (
-              <div
-                draggable
-                onDragStart={(e) => onDragStart(e, 'fileWriter')}
-                style={{ cursor: 'move', padding: '8px' }}
-              >
-                {item.text}
-              </div>
-            ),
-          },
-          {
-            key: 'output2',
-            text: 'Output 2',
-            onClick: () => console.log('Output 2 clicked'),
-            onRender: (item: ICommandBarItemProps) => (
-              <div
-                draggable
-                onDragStart={(e) => onDragStart(e, 'output2')}
-                style={{ cursor: 'move', padding: '8px' }}
-              >
-                {item.text}
-              </div>
-            ),
-          },
-        ],
-      },
-    },
-    {
-      key: 'operations',
-      text: 'Operations',
-      iconProps: { iconName: 'Add' },
-      subMenuProps: {
-        items: [
-          {
-            key: 'aggregate',
-            text: 'Aggregate',
-            onClick: onAddAggregate,
-            onRender: (item: ICommandBarItemProps) => (
-              <div
-                draggable
-                onDragStart={(e) => onDragStart(e, 'aggregate')}
-                style={{ cursor: 'move', padding: '8px' }}
-              >
-                {item.text}
-              </div>
-            ),
-          },
-          {
-            key: 'groupby',
-            text: 'Group By',
-            onClick: onAddGroupBy,
-            onRender: (item: ICommandBarItemProps) => (
-              <div
-                draggable
-                onDragStart={(e) => onDragStart(e, 'groupby')}
-                style={{ cursor: 'move', padding: '8px' }}
-              >
-                {item.text}
-              </div>
-            ),
-          },
-          {
-            key: 'join',
-            text: 'Join',
-            onClick: onAddJoin,
-            onRender: (item: ICommandBarItemProps) => (
-              <div
-                draggable
-                onDragStart={(e) => onDragStart(e, 'join')}
-                style={{ cursor: 'move', padding: '8px' }}
-              >
-                {item.text}
-              </div>
-            ),
-          },
-        ],
-      },
     },
     {
       key: 'save',
@@ -286,10 +163,10 @@ const GraphPipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , 
    }, [graph , pipelineId, showMessage , setJobId]);
 
   return (
-    <div >
+    <div style={{ backgroundColor: '#fff', boxShadow: 'rgba(0, 0, 0, 0.133) 0px 3.6px 3.6px -2px, rgba(0, 0, 0, 0.11) 0px 0.3px 0.9px -0.6px' }}>
       {isEditing ? (
         <TextField
-          style={{ width: '30%'}}
+          styles={{ root: { width: '30%', padding: '10px 0px 0px 30px' } }}
           value={newPipelineName}
           onChange={handleInputChange}
           onBlur={handleConfirm}
@@ -298,8 +175,9 @@ const GraphPipelineHeader: React.FC<PipelineHeaderProps> = ({ onAddFileReader , 
         />
       ) : (
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <h3 style={{ margin: 0 }}>{pipelineName}</h3>
+          <h3 style={{ margin: 0, padding: '10px 0px 0px 30px' }}>{pipelineName}</h3>
           <IconButton
+            style={{ margin: 0, padding: '10px 0px 0px 8px' }}
             iconProps={{ iconName: 'Edit' }}
             onClick={handleEditClick}
             ariaLabel="Edit pipeline name"

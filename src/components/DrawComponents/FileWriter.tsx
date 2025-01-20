@@ -7,20 +7,10 @@ import { FileArrowDown } from "@phosphor-icons/react";
 import { usePanel } from "../Panels/PanelProvider";
 import { FileWriterPanel } from "../Panels/FileWriterPanel/FileWriterPanel";
 import { useNodesData  } from '@xyflow/react';
-
+import { handleBaseStyles, cardStyles } from './commonStyles';
 interface FileWriterProps extends NodeProps {
   id: string;
 }
-
-const cardStyles = (valid: boolean) => ({
-  root: {
-    border: '1px solid',
-    borderColor: valid ? '#0078d4' : 'red',
-    borderRadius: '4px',
-    width: '250px',
-    cursor: 'pointer',
-  }
-});
 
 const FileWriter: React.FC<FileWriterProps> = ({ id }) => {
   const { openPanel } = usePanel();
@@ -40,7 +30,7 @@ const FileWriter: React.FC<FileWriterProps> = ({ id }) => {
         "File Writer"
       )}
     >
-      <Handle type="target" position={Position.Left} />
+      <Handle style={handleBaseStyles} type="target" position={Position.Left} />
 
       <Stack horizontal tokens={{ childrenGap: 10 }} verticalAlign="center">
         <FileArrowDown

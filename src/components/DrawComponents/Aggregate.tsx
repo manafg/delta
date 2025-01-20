@@ -8,10 +8,12 @@ import { usePanel } from "../Panels/PanelProvider";
 import { AggregatePanel } from "../Panels/AggregatePanel/AggregatePanel";
 import { useState } from "react";
 import { useDrawer } from '../DrawerContext';
-
+import { AggregateIcon } from "../../assets/Aggregate";
+import { handleBaseStyles, cardStyles } from "./commonStyles";
 interface AggregateProps extends NodeProps {
   onClick?: () => void;
 }
+
 
 const Aggregate: React.FC<AggregateProps> = (props:any) => {
   const { openPanel } = usePanel();
@@ -68,14 +70,8 @@ const Aggregate: React.FC<AggregateProps> = (props:any) => {
     <Card
       className="aggregate-node"
       tokens={{ childrenGap: 10, padding: 10 }}
-      styles={{
-        root: {
-          border: "1px solid #0078d4",
-          borderRadius: "4px",
-          width: "250px",
-          cursor: "pointer",
-        },
-      }}
+      styles={cardStyles(true)}
+        
       onContextMenu={handleRightClick}
       onClick={() =>
         openPanel(
@@ -86,11 +82,11 @@ const Aggregate: React.FC<AggregateProps> = (props:any) => {
         )
       }
     >
-      <Handle type="target" position={Position.Left} />
-      <Handle type="source" position={Position.Right} />
+      <Handle style={handleBaseStyles} type="target" position={Position.Left} />
+      <Handle style={handleBaseStyles} type="source" position={Position.Right} />
 
       <Stack horizontal tokens={{ childrenGap: 10 }} verticalAlign="center">
-        <FontIcon iconName="Merge" style={{ fontSize: 24, color: "#0078d4" }} />
+        <AggregateIcon />
         <Text variant="large">Aggregate</Text>
       </Stack>
 

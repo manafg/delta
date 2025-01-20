@@ -1,17 +1,19 @@
 import React from "react";
-import { Handle, Position, useReactFlow } from "@xyflow/react";
-import { Text, Stack, Icon, Separator, ContextualMenu, IContextualMenuProps  } from "@fluentui/react";
+import { Handle, Position } from "@xyflow/react";
+import { Text, Stack, Separator, ContextualMenu, IContextualMenuProps  } from "@fluentui/react";
 import { Card } from "@fluentui/react-cards";
-import { FontIcon } from "@fluentui/react/lib/Icon";
 import { NodeProps } from "@xyflow/react";
 import { usePanel } from "../Panels/PanelProvider";
 import { GroupByPanel } from "../Panels/GroupByPanel/GroupByPanel";
 import { useState } from "react";
 import { useDrawer } from '../DrawerContext';
-
+import GroupByIcon from '../../assets/GroupBy';
+import { handleBaseStyles, cardStyles } from './commonStyles';
 interface GroupByProps extends NodeProps {
   onClick?: () => void;
 }
+
+
 
 const GroupBy: React.FC<GroupByProps> = (props:any) => {
   const { openPanel } = usePanel();
@@ -67,15 +69,8 @@ const GroupBy: React.FC<GroupByProps> = (props:any) => {
     <>
     <Card
       className="aggregate-node"
-      tokens={{ childrenGap: 10, padding: 10 }}
-      styles={{
-        root: {
-          border: "1px solid #0078d4",
-          borderRadius: "4px",
-          width: "250px",
-          cursor: "pointer",
-        },
-      }}
+      tokens={{ childrenGap: 10, padding: 10  }}
+      styles={cardStyles(true)}
       onContextMenu={handleRightClick}
       onClick={() =>
         openPanel(
@@ -86,11 +81,11 @@ const GroupBy: React.FC<GroupByProps> = (props:any) => {
         )
       }
     >
-      <Handle type="target" position={Position.Left} />
-      <Handle type="source" position={Position.Right} />
+      <Handle style={handleBaseStyles} type="target" position={Position.Left} />
+      <Handle style={handleBaseStyles} type="source" position={Position.Right} />
 
       <Stack horizontal tokens={{ childrenGap: 10 }} verticalAlign="center">
-        <FontIcon iconName="Merge" style={{ fontSize: 24, color: "#0078d4" }} />
+        <GroupByIcon />
         <Text variant="large">Group By</Text>
       </Stack>
 
