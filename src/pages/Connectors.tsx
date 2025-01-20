@@ -15,6 +15,7 @@ import {
 } from '@fluentui/react';
 import { postConnectorsList } from '../api/listConnecters';
 import { useNavigate } from 'react-router-dom';
+import CreateConnectorPanel from '../components/Connectors/ConnectorPanel/CreateConnectorPanel';
 
 interface IConnector {
   id: string;
@@ -48,6 +49,7 @@ const Connectors: React.FC = () => {
   const [connectors, setConnectors] = useState<IConnector[]>([]);
   const [searchText, setSearchText] = useState('');
   const navigate = useNavigate();
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
 
   const columns: IColumn[] = [
     {
@@ -99,7 +101,11 @@ const Connectors: React.FC = () => {
   };
 
   const handleCreateNew = () => {
-    navigate('/connectors/new'); // Navigate to create connector page
+    setIsPanelOpen(true);
+  };
+
+  const handlePanelDismiss = () => {
+    setIsPanelOpen(false);
   };
 
   const filteredConnectors = connectors.filter(connector =>
@@ -161,6 +167,11 @@ const Connectors: React.FC = () => {
       </Stack>
 
       {renderContent()}
+
+      <CreateConnectorPanel 
+        isOpen={isPanelOpen}
+        onDismiss={handlePanelDismiss}
+      />
     </Stack>
   );
 };

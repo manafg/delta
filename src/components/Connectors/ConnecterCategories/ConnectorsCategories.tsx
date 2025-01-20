@@ -11,6 +11,8 @@ import { mergeStyles } from '@fluentui/react/lib/Styling';
 
 import { Stack, IStackTokens } from '@fluentui/react/lib/Stack';
 import { TextField } from '@fluentui/react/lib/TextField';
+import { ChoiceGroup, IChoiceGroupOption } from '@fluentui/react/lib/ChoiceGroup';
+import { mergeStyleSets } from '@fluentui/react/lib/Styling';
 
 interface Connector {
   id: string;
@@ -28,9 +30,27 @@ interface ConnectorsCatalogs {
 
 const conversationTileClass = mergeStyles({ height: 100 });
 
-export default function Connectors() {
+// Add direction type constants
+const DIRECTION = {
+  SOURCE: 1,
+  SINK: 2,
+};
+
+// Add styles for the choice group
+const styles = mergeStyleSets({
+  choiceGroup: {
+    marginBottom: 20,
+    '.ms-ChoiceField': {
+      marginRight: 20,
+      display: 'inline-block',
+    }
+  }
+});
+
+export default function ConnectorsCategories() {
   const [connectors, setConnectors] = useState<ConnectorsCatalogs>({ items: [], totalCount: 0 });
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedDirection, setSelectedDirection] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchConnectors = async (query: string = '') => {
@@ -55,6 +75,33 @@ export default function Connectors() {
     logoIcon: 'OutlookLogo',
   };
 
+  const directionOptions: IChoiceGroupOption[] = [
+    { key: 'all', text: 'All' },
+    { key: 'source', text: 'Source' },
+    { key: 'sink', text: 'Sink' },
+  ];
+
+  const filteredConnectors = connectors.items.filter(connector => {
+    const matchesSearch = connector.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesDirection = selectedDirection ? connector.direction === selectedDirection : true;
+    return matchesSearch && matchesDirection;
+  });
+
+  const handleDirectionChange = (ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IChoiceGroupOption) => {
+    if (option) {
+      switch (option.key) {
+        case 'source':
+          setSelectedDirection(DIRECTION.SOURCE);
+          break;
+        case 'sink':
+          setSelectedDirection(DIRECTION.SINK);
+          break;
+        default:
+          setSelectedDirection(null);
+      }
+    }
+  };
+
   return (
     <div style={{ padding: 20 }}>
       <h1>Connectors</h1>
@@ -65,8 +112,17 @@ export default function Connectors() {
         value={searchQuery}
         onChange={(e, newValue) => setSearchQuery(newValue || '')}
       />
+
+      <ChoiceGroup
+        className={styles.choiceGroup}
+        defaultSelectedKey="all"
+        options={directionOptions}
+        onChange={handleDirectionChange}
+        label="Filter by direction"
+      />
+
       <Stack wrap horizontal tokens={stackTokens} styles={{ root: { display: 'flex', flexWrap: 'wrap' } }}>
-        {connectors.items?.map((connector) => (
+        {filteredConnectors.map((connector) => (
           <DocumentCard
             key={connector.id}
             aria-label={`Document Card for ${connector.name}`}
