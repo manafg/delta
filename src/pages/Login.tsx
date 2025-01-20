@@ -16,6 +16,7 @@ function Login() {
   useEffect(() => {
     if (initialized) {
       if (keycloak.authenticated) {
+        localStorage.setItem('token', keycloak?.token || '');
         navigate('/home');
       } else {
         keycloak.login();

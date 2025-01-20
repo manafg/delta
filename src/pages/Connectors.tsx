@@ -1,101 +1,168 @@
 import React, { useEffect, useState } from 'react';
-import { getConnectorsCatalogs } from '../api/getConnectorsCatalogs';
-import { Card, CardHeader } from '@fluentui/react-components';
 import {
-  DocumentCard,
-  DocumentCardActivity,
-  DocumentCardDetails,
-  DocumentCardPreview,
-  DocumentCardTitle,
-  IDocumentCardPreviewProps,
-  DocumentCardType,
-  DocumentCardLogo,
-  DocumentCardStatus,
-  IDocumentCardLogoProps,
-  IDocumentCardStyles,
-} from '@fluentui/react/lib/DocumentCard';
-import { mergeStyles } from '@fluentui/react/lib/Styling';
+  SearchBox,
+  DetailsList,
+  IColumn,
+  SelectionMode,
+  Stack,
+  StackItem,
+  DefaultButton,
+  IStackTokens,
+  Text,
+  FontIcon,
+  ITextStyles,
+  IStackStyles
+} from '@fluentui/react';
+import { postConnectorsList } from '../api/listConnecters';
+import { useNavigate } from 'react-router-dom';
 
-import { Stack, IStackTokens } from '@fluentui/react/lib/Stack';
-import { TextField } from '@fluentui/react/lib/TextField';
-
-interface Connector {
+interface IConnector {
   id: string;
   name: string;
-  description: string;
-  direction: number;
-  environment: number;
-  icon: string;
+  status: string;
+  environment: string;
+  direction: string;
 }
 
-interface ConnectorsCatalogs {
-  items: Connector[];
-  totalCount: number;
-}
+const stackTokens: IStackTokens = {
+  childrenGap: 20,
+  padding: 20,
+};
 
-const conversationTileClass = mergeStyles({ height: 100 });
+const emptyStateTextStyles: ITextStyles = {
+  root: {
+    fontSize: '16px',
+    color: '#666666'
+  }
+};
 
-export default function Connectors() {
-  const [connectors, setConnectors] = useState<ConnectorsCatalogs>({ items: [], totalCount: 0 });
-  const [searchQuery, setSearchQuery] = useState<string>('');
+const emptyStateStackStyles: IStackStyles = {
+  root: {
+    height: '300px',
+    backgroundColor: '#f8f8f8',
+    borderRadius: '4px'
+  }
+};
 
-  useEffect(() => {
-    const fetchConnectors = async (query: string = '') => {
-      try {
-        const data = await getConnectorsCatalogs(query);
-        setConnectors(data);
-      } catch (error) {
-        console.error("Error fetching connectors:", error);
-      }
-    };
+const Connectors: React.FC = () => {
+  const [connectors, setConnectors] = useState<IConnector[]>([]);
+  const [searchText, setSearchText] = useState('');
+  const navigate = useNavigate();
 
-    fetchConnectors(searchQuery);
-  }, [searchQuery]);
+  const columns: IColumn[] = [
+    {
+      key: 'name',
+      name: 'Name',
+      fieldName: 'name',
+      minWidth: 100,
+      maxWidth: 200,
+    },
+    {
+      key: 'status',
+      name: 'Status',
+      fieldName: 'status',
+      minWidth: 100,
+      maxWidth: 100,
+    },
+    {
+      key: 'environment',
+      name: 'Environment',
+      fieldName: 'environment',
+      minWidth: 100,
+      maxWidth: 150,
+    },
+    {
+      key: 'direction',
+      name: 'Direction',
+      fieldName: 'direction',
+      minWidth: 100,
+      maxWidth: 150,
+    },
+  ];
 
-  const stackTokens: IStackTokens = { childrenGap: 20 };
-
-  const cardStyles: IDocumentCardStyles = {
-    root: { display: 'inline-block', marginRight: 20, width: 320 },
+  const fetchConnectors = async () => {
+    try {
+      const response = await postConnectorsList(10, 0, 0, 0, 0); // Default values
+      setConnectors(response.items || []);
+    } catch (error) {
+      console.error('Failed to fetch connectors:', error);
+    }
   };
 
-  const logoProps: IDocumentCardLogoProps = {
-    logoIcon: 'OutlookLogo',
+  useEffect(() => {
+    fetchConnectors();
+  }, []);
+
+  const handleSearch = (newValue?: string) => {
+    setSearchText(newValue || '');
+    // Implement search logic here
+  };
+
+  const handleCreateNew = () => {
+    navigate('/connectors/new'); // Navigate to create connector page
+  };
+
+  const filteredConnectors = connectors.filter(connector =>
+    connector.name.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  const renderContent = () => {
+    if (connectors.length === 0) {
+      return (
+        <Stack
+          horizontalAlign="center"
+          verticalAlign="center"
+          styles={emptyStateStackStyles}
+        >
+          <FontIcon
+            iconName="Connector"
+            style={{ fontSize: '32px', color: '#666666', marginBottom: '12px' }}
+          />
+          <Text styles={emptyStateTextStyles}>No connectors found</Text>
+          <Text styles={emptyStateTextStyles} style={{ marginBottom: '16px' }}>
+            Get started by creating your first connector
+          </Text>
+          <DefaultButton
+            text="Create New Connector"
+            onClick={handleCreateNew}
+            primary
+          />
+        </Stack>
+      );
+    }
+
+    return (
+      <DetailsList
+        items={filteredConnectors}
+        columns={columns}
+        selectionMode={SelectionMode.none}
+        isHeaderVisible={true}
+      />
+    );
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Connectors</h1>
-      
-      <TextField
-        styles={{ root: { width: '60%', marginBottom: 20 } }}
-        label="Search by name"
-        value={searchQuery}
-        onChange={(e, newValue) => setSearchQuery(newValue || '')}
-      />
-      <Stack wrap horizontal tokens={stackTokens} styles={{ root: { display: 'flex', flexWrap: 'wrap' } }}>
-        {connectors.items?.map((connector) => (
-          <DocumentCard
-            key={connector.id}
-            aria-label={`Document Card for ${connector.name}`}
-            styles={cardStyles}
-            onClickHref="http://bing.com"
-          >
-            <img width={80} height={80} style={{ margin: 10 }} src={connector.icon} alt={`${connector.name} icon`} />
-            <div className={conversationTileClass}>
-              <DocumentCardTitle title={connector.name} shouldTruncate />
-              <DocumentCardTitle
-                title={connector.description}
-                shouldTruncate
-                showAsSecondaryTitle
-              />
-            </div>
-            <DocumentCardActivity
-              activity={`Direction: ${connector.direction}, Environment: ${connector.environment}`}
-              people={[{ name: connector.name, profileImageSrc: '' }]}
-            />
-          </DocumentCard>
-        ))}
+    <Stack tokens={stackTokens}>
+      <Stack horizontal horizontalAlign="space-between">
+        <StackItem grow={1}>
+          <SearchBox
+            placeholder="Search connectors..."
+            onChange={(_, newValue) => handleSearch(newValue)}
+            styles={{ root: { width: 300 } }}
+          />
+        </StackItem>
+        <StackItem>
+          <DefaultButton
+            text="Create New Connector"
+            onClick={handleCreateNew}
+            primary
+          />
+        </StackItem>
       </Stack>
-    </div>
+
+      {renderContent()}
+    </Stack>
   );
-}
+};
+
+export default Connectors;
